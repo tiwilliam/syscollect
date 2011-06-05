@@ -6,7 +6,7 @@ import subprocess
 
 import plugin
 
-class Plugins():
+class Repository():
 	def __init__(self, path):
 		self.path = path
 		self.logger = logging.getLogger('default')

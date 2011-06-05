@@ -38,4 +38,4 @@ class Plugin():
 				elif var == 'subtitle':
 					self.subtitle = val
 				else:
-					print 'Unknown config property: ' + var
+					self.logger.warn('Unknown config property: ' + var)
