@@ -42,4 +42,4 @@ else:
 	os.sys.exit(1)
 
 while True:
-	time.sleep(10)
+	time.sleep(1)

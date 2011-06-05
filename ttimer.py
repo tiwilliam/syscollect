@@ -49,8 +49,8 @@ class ttimer():
 				tmptime = time.time()
 
 				if tmptime >= (self.mytime + self.interval):
-					cbfunc(cbparam)
 					self.mytime = time.time()
+					cbfunc(cbparam)
 					retry += 1
 				else:
 					pass

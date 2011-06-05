@@ -13,65 +13,84 @@ class Repository():
 		self.logger = logging.getLogger('default')
 		self.load_plugins()
 
-	def reload_plugins(self):
-		old_list = self.get_plugins()
-		self.load_plugins()
-		new_list = self.get_plugins()
+	def pop_plugin(self, id):
+		i = 0
+		for p in self.plugins:
+			if p.id == id:
+				return self.plugins.pop(i)
+			i += 1
 
+	def get_plugins(self):
+		if hasattr(self, 'plugins'):
+			return self.plugins
+
+		return None
+
+	def start_plugins(self):
+		for p in self.plugins:
+			if not p.status(): p.start()
+
+	def reload_plugins(self):
 		old_ids = []
 		new_ids = []
 
-		for old in old_list:
-			old_ids += [old.id]
+		# Build up lists with identifers before and after reload
+		for new in self.read_dir():
+			new_ids += [new]
 
-		for new in new_list:
-			new_ids += [new.id]
+		for old in self.get_plugins():
+			old_ids += [old.id]
 
 		removed_plugins = set(old_ids) - set(new_ids)
 		added_plugins = set(new_ids) - set(old_ids)
 
-	def load_plugins(self):
+		# Stop threads for plugins that have been removed
+		for p in removed_plugins:
+			old_plugin = self.pop_plugin(p)
+			if old_plugin: old_plugin.stop()
+			del old_plugin
+
+		for p in added_plugins:
+			self.logger.info('Adding ' + p + ' to polling list')
+			self.plugins += [plugin.Plugin(p, self.path)]
+
+		# Start stopped plugins
+		self.start_plugins()
+
+	def read_dir(self):
 		try:
 			files = os.listdir(self.path)
-			self.plugins = []
+			plugins = []
 
 			for file in files:
 				full_file_path = self.path + '/' + file
 
 				p = re.compile('^[^\.]')
 				if p.match(file) and os.path.isfile(full_file_path):
-					try:
-						proc = subprocess.Popen(
-							[full_file_path, 'config'],
-							stdout = subprocess.PIPE,
-							stderr = subprocess.PIPE
-						)
+					plugins += [file]
 
-						stdout, stderr = proc.communicate()
-
-						config = stdout.strip()
-						config_list = config.split('\n')
-
-						try:
-							self.plugins += [plugin.Plugin(file, config_list)]
-						except plugin.PluginError as e:
-							self.logger.error(e)
-
-					except OSError as e:
-						self.logger.warn('Failed to fetch config: ' + self.path + '/' + file + ': ' + e.strerror)
-
-			self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.path)
-
-			return self.plugins
+			return plugins
 		except OSError as e:
 			self.logger.error('Failed to read directory \'' + self.path + '\': ' + e.strerror)
 			return None
+		
 
-	def load_saved_config(self):
+	def load_plugins(self):
+		files = self.read_dir()
+		self.plugins = []
+
+		for file in files:
+			try:
+				self.plugins += [plugin.Plugin(file, self.path)]
+			except plugin.PluginError as e:
+				self.logger.error(e)
+
+		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.path)
+
+		return self.plugins
+
+	def config_load(self):
 		return # Do overrides to config values
 
-	def get_plugins(self):
-		if hasattr(self, 'plugins'):
-			return self.plugins
-		else:
-			return None
+	def config_save(self):
+		return # Save runtime config to file
