@@ -1,23 +1,45 @@
 import os
 import time
-import subprocess
+import signal
 
 import util
 import repository
+
+def gotsignal(signum, frame):
+	if signum == signal.SIGINT:
+		logger.info('Received interrupt signal - bye')
+		os.sys.exit(0)
+	if signum == signal.SIGHUP:
+		logger.info('Reloading plugin directory')
+		repo.reload_plugins()
 
 path = 'plugins'
 loglevel = 'debug'
 
 logger = util.logger(loglevel)
-repo = repository.Repository(path)
+system = os.uname()[0]
+
+signal.signal(signal.SIGINT, gotsignal)
+signal.signal(signal.SIGHUP, gotsignal)
+
+if system == 'Linux':
+	logger.info('You are running Linux')
+
+repo = repository.Repository(path, system.lower())
 
 # Setup TCP port and create CMD callbacks
 #
 # mgmt = tcp.listen('', 8090)
 # mgmt.callback('list', list_plugins)
 
-for p in repo.get_plugins():
-	p.start()
+loaded_plugins = repo.get_plugins()
+
+if loaded_plugins:
+	for p in loaded_plugins:
+		p.start()
+else:
+	logger.error('No plugins found - bye')
+	os.sys.exit(1)
 
 while True:
 	time.sleep(10)
