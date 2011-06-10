@@ -1,27 +1,23 @@
 import sys
 import time
 import thread
+import timeit
 
 class ttimer():
-	def __init__(self, interval, retry, cbfunc, cbparam=[]):
-		self.is_start = False
-		self.is_end = False
+	def __init__(self, interval, cbfunc, cbparam=[]):
+		self.running = True
 		self.interval = interval
 
-		thread.start_new_thread(self._callback, (retry, cbfunc, cbparam))
+		thread.start_new_thread(self._callback, (cbfunc, cbparam))
 
 	def start(self):
-		self.mytime = time.time()
-		self.is_start = True
-		self.is_end = False
+		self.running = True
 
 	def stop(self):
-		self.mytime = time.time()
-		self.is_start = False
-		self.is_end = True
+		self.running = False
 
-	def is_stop(self):
-		if self.is_end:
+	def status(self):
+		if self.running:
 			return True
 		else:
 			return False
@@ -29,32 +25,16 @@ class ttimer():
 	def update_interval(self, new_interval):
 		self.interval = new_interval
 
-	def _callback(self, retry, cbfunc, cbparam=[]):
-		self.retry = retry
-		retry = 0
-
-		if self.is_end:
-			return None
+	def _callback(self, cbfunc, cbparam=[]):
+		time.sleep(self.interval)
 
 		while True:
-			if self.is_end:
+			if self.running:
+				s = time.time()
+				cbfunc(cbparam)
+				d = time.time() - s
+				time.sleep(self.interval - d)
+			else:
 				break
 
-			if self.retry == -1:
-				pass
-			elif retry >= self.retry:
-				break
-
-			if self.is_start:
-				tmptime = time.time()
-
-				if tmptime >= (self.mytime + self.interval):
-					self.mytime = time.time()
-					cbfunc(cbparam)
-					retry += 1
-				else:
-					pass
-
-				time.sleep(0.1)
-
-		self.is_end = True
+		self.running = False

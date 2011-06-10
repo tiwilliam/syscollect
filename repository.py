@@ -47,9 +47,11 @@ class Repository():
 		# Stop threads for plugins that have been removed
 		for p in removed_plugins:
 			old_plugin = self.pop_plugin(p)
-			if old_plugin: old_plugin.stop()
-			del old_plugin
+			if old_plugin:
+				old_plugin.stop()
+				del old_plugin
 
+		# Add new plugins to list
 		for p in added_plugins:
 			self.logger.info('Adding ' + p + ' to polling list')
 			self.plugins += [plugin.Plugin(p, self.path)]

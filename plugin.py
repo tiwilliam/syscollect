@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import logging
 import subprocess
 
@@ -7,11 +8,12 @@ import ttimer
 
 class Plugin():
 	def __init__(self, file, path):
-		self.id = file
+		self.id = os.path.splitext(file)[0]
 		self.file = file
 		self.path = path
 		self.running = False
 		self.logger = logging.getLogger('default')
+		self.data = []
 
 		# Parse plugin name, author and os
 		m = re.match(r'([\w\d.]+)-([\w\d.]+)-([\w\d.]+)', os.path.splitext(file)[0])
@@ -21,7 +23,7 @@ class Plugin():
 			self.author = m.group(2)
 			self.os = m.group(3)
 		except:
-			raise PluginError('Invalid plugin name: ' + self.file)
+			raise PluginError('Invalid plugin name: ' + self.file + ': expected <name>-<author>-<os>.<ext>')
 
 		# Set default values
 		self.interval = 10
@@ -31,7 +33,7 @@ class Plugin():
 			self.config = self.read_config()
 
 		# Create thread with timer
-		self.t = ttimer.ttimer(self.interval, -1, self.execute, self.file)
+		self.t = ttimer.ttimer(self.interval, self.execute)
 
 	def read_config(self):
 		file_path = self.path + '/' + self.file
@@ -57,7 +59,7 @@ class Plugin():
 
 
 	def start(self):
-		self.logger.debug('Start polling ' + self.id)
+		self.logger.debug('Start polling ' + self.id + ' with interval ' + str(self.interval))
 		self.running = True
 		self.t.start()
 
@@ -69,8 +71,33 @@ class Plugin():
 	def status(self):
 		return self.running
 
-	def execute(self, path):
-		self.logger.debug('Running ' + self.id + ' (' + str(self) + ')')
+	def execute(self, args):
+		self.logger.debug('Running ' + self.id)
+
+		try:
+			start = time.time()
+        	
+			proc = subprocess.Popen(
+				[self.path + '/' + self.file],
+				stdout = subprocess.PIPE,
+				stderr = subprocess.PIPE
+			)
+        	
+			stdout, stderr = proc.communicate()
+        	
+			# Save data
+			
+			for line in stdout.split('\n'):
+				if line:
+					value = re.match(r'([\\/\w\d_]+)\.value ([\d.]+)$', line).groups()
+        	
+			elapsed = time.time() - start
+			
+			if elapsed > self.interval:
+				self.logger.warn('Execution of plugin exceeds interval (interval: ' + str(self.interval) + ' execution: ' + str(round(elapsed)) + ': ' + self.id)
+        	
+		except OSError:
+			self.logger.error('Failed to execute plugin: ' + self.id)
 
 	def update_interval(self, new_interval):
 		self.t.update_interval(new_interval)
