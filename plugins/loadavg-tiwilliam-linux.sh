@@ -1,7 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+if [ ! -d /proc ]; then
+	echo "Error: No proc filesystem not found"
+	exit 1
+fi
 
 if [ "$1" == "config" ]; then
-#	echo "interval 10"
+	echo "interval 10"
 	exit
 fi
 
