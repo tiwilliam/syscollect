@@ -1,7 +1,6 @@
 import sys
 import time
 import thread
-import timeit
 
 class ttimer():
 	def __init__(self, interval, cbfunc, cbparam=[]):

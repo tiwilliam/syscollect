@@ -13,9 +13,10 @@ class Plugin():
 		self.path = path
 		self.running = False
 		self.logger = logging.getLogger('default')
-		self.data = []
+		self.data = {}
 
 		# Parse plugin name, author and os
+		# loadavg-william-linux.sh
 		m = re.match(r'([\w\d.]+)-([\w\d.]+)-([\w\d.]+)', os.path.splitext(file)[0])
 
 		try:
@@ -85,14 +86,22 @@ class Plugin():
         	
 			stdout, stderr = proc.communicate()
         	
-			# Save data
-			
 			for line in stdout.split('\n'):
 				if line:
-					value = re.match(r'([\\/\w\d_]+)\.value ([\d.]+)$', line).groups()
+					# Save value in dict
+					match = re.match(r'(.*)\.value ([\d.]+)$', line).groups()
+
+					key = match[0]
+					value = match[1]
+
+					if key in self.data:
+						self.data[key] += [value]
+					else:
+						self.data[key] = [value]
         	
 			elapsed = time.time() - start
-			
+		
+			# Warn if execution takes more time than the interval	
 			if elapsed > self.interval:
 				self.logger.warn('Execution of plugin exceeds interval (interval: ' + str(self.interval) + ' execution: ' + str(round(elapsed)) + ': ' + self.id)
         	

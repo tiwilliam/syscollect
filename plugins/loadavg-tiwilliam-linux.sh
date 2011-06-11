@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "$1" == "config" ]; then
 #	echo "interval 10"

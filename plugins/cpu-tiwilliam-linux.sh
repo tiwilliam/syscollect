@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "$1" == "config" ]; then
-	echo "interval 5"
+	echo "interval 2"
 	exit
 fi
 
