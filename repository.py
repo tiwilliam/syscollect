@@ -67,9 +67,19 @@ class Repository():
 			for file in files:
 				full_file_path = self.path + '/' + file
 
-				p = re.compile('^[^\.]')
-				if p.match(file) and os.path.isfile(full_file_path):
-					plugins += [file]
+				if os.path.isfile(full_file_path):
+					dotfile = re.compile('^\.')
+					anysystem = re.compile('-any\.[\w\d]+$')
+					cursystem = re.compile('-' + self.system + '\.[\w\d]+$')
+
+					# Skip dot-files
+					if dotfile.search(file):
+						self.logger.debug('Skipping dot-file: ' + file)
+						continue
+
+					# Add plugin to polling list if os or any match
+					if cursystem.search(file) or anysystem.search(file):
+						plugins += [file]
 
 			return plugins
 		except OSError as e:

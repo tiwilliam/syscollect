@@ -85,19 +85,26 @@ class Plugin():
 			)
         	
 			stdout, stderr = proc.communicate()
-        	
+
+			key = None
+			value = None
+
 			for line in stdout.split('\n'):
 				if line:
 					# Save value in dict
-					match = re.match(r'(.*)\.value ([\d.]+)$', line).groups()
+					match = re.match(r'(.*)\.value ([\d.]+)$', line)
 
-					key = match[0]
-					value = match[1]
+					if match:
+						key = match.groups()[0]
+						value = match.groups()[1]
 
-					if key in self.data:
-						self.data[key] += [value]
-					else:
-						self.data[key] = [value]
+						if key in self.data:
+							self.data[key] += [value]
+						else:
+							self.data[key] = [value]
+
+			if key is None:
+				self.logger.warn('No valid data output from ' + self.id)
         	
 			elapsed = time.time() - start
 		

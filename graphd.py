@@ -22,8 +22,7 @@ system = os.uname()[0]
 signal.signal(signal.SIGINT, gotsignal)
 signal.signal(signal.SIGHUP, gotsignal)
 
-if system == 'Linux':
-	logger.info('You are running Linux')
+logger.info('You are running ' + system)
 
 repo = repository.Repository(path, system.lower())
 
