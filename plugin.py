@@ -5,15 +5,16 @@ import logging
 import subprocess
 
 import ttimer
+import datastore
 
 class Plugin():
-	def __init__(self, file, path):
+	def __init__(self, file, path, ttl):
 		self.id = os.path.splitext(file)[0]
 		self.file = file
 		self.path = path
 		self.running = False
 		self.logger = logging.getLogger('default')
-		self.data = {}
+		self.datastore = datastore.datastore(ttl)
 
 		# Parse plugin name, author and os
 		# loadavg-william-linux.sh
@@ -83,31 +84,25 @@ class Plugin():
 				stdout = subprocess.PIPE,
 				stderr = subprocess.PIPE
 			)
-        	
-			stdout, stderr = proc.communicate()
 
-			key = None
-			value = None
+			found_values = 0
+			stdout, stderr = proc.communicate()
 
 			for line in stdout.split('\n'):
 				if line:
-					# Save value in dict
+					# Parse values returned from plugin
 					match = re.match(r'(.*)\.value ([\d.]+)$', line)
 
+					# If we find 'something.value 123', keep it
 					if match:
-						key = match.groups()[0]
-						value = match.groups()[1]
+						self.datastore.push(match.groups()[0], match.groups()[1])
+						found_values += 1
 
-						if key in self.data:
-							self.data[key] += [value]
-						else:
-							self.data[key] = [value]
+			if found_values == 0:
+				self.logger.warn('No valid output from ' + self.id)
 
-			if key is None:
-				self.logger.warn('No valid data output from ' + self.id)
-        	
 			elapsed = time.time() - start
-		
+
 			# Warn if execution takes more time than the interval	
 			if elapsed > self.interval:
 				self.logger.warn('Execution of plugin exceeds interval (interval: ' + str(self.interval) + ' execution: ' + str(round(elapsed)) + ': ' + self.id)

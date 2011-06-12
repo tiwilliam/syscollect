@@ -13,6 +13,7 @@ def gotsignal(signum, frame):
 		logger.info('Reloading plugin directory')
 		repo.reload_plugins()
 
+ttl = 300
 path = 'plugins'
 loglevel = 'debug'
 
@@ -24,7 +25,7 @@ signal.signal(signal.SIGHUP, gotsignal)
 
 logger.info('You are running ' + system)
 
-repo = repository.Repository(path, system.lower())
+repo = repository.Repository(path, system.lower(), ttl)
 
 # Setup TCP port and create CMD callbacks
 #

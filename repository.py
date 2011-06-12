@@ -7,7 +7,8 @@ import subprocess
 import plugin
 
 class Repository():
-	def __init__(self, path, system):
+	def __init__(self, path, system, ttl):
+		self.ttl = ttl
 		self.path = path
 		self.system = system
 		self.logger = logging.getLogger('default')
@@ -54,7 +55,7 @@ class Repository():
 		# Add new plugins to list
 		for p in added_plugins:
 			self.logger.info('Adding ' + p + ' to polling list')
-			self.plugins += [plugin.Plugin(p, self.path)]
+			self.plugins += [plugin.Plugin(p, self.path, self.ttl)]
 
 		# Start stopped plugins
 		self.start_plugins()
@@ -93,7 +94,7 @@ class Repository():
 
 		for file in files:
 			try:
-				self.plugins += [plugin.Plugin(file, self.path)]
+				self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
 			except plugin.PluginError as e:
 				self.logger.error(e)
 
