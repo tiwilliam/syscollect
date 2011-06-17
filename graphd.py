@@ -4,6 +4,7 @@ import signal
 
 import tcp
 import util
+import static
 import repository
 
 def gotsignal(signum, frame):
@@ -14,19 +15,15 @@ def gotsignal(signum, frame):
 		logger.info('Reloading plugin directory')
 		repo.reload_plugins()
 
-ttl = 300
-path = 'plugins'
-loglevel = 'debug'
-
-logger = util.logger(loglevel)
+logger = util.logger(static.loglevel)
 system = os.uname()[0]
 
 signal.signal(signal.SIGINT, gotsignal)
 signal.signal(signal.SIGHUP, gotsignal)
 
-logger.info('You are running ' + system)
+logger.info('Starting graphd version ' + str(static.major) + '.' + str(static.minor))
 
-repo = repository.Repository(path, system.lower(), ttl)
+repo = repository.Repository(static.path, system.lower(), static.ttl)
 loaded_plugins = repo.get_plugins()
 
 if loaded_plugins:
@@ -36,21 +33,34 @@ else:
 	logger.error('No plugins found - bye')
 	os.sys.exit(1)
 
-def mgmt_list(args):
+def mgmt_list(conn, args):
 	plist = ''
+
 	for p in loaded_plugins:
 		plist += p.id + ' '
-	return plist
 
-def mgmt_fetch(args):
+	conn.wfile.write(plist)
+	conn.wfile.write('\n')
+
+def mgmt_fetch(conn, args):
 	if args:
-		plugin_id = args[1]
+		plugin_id = args[0]
 
-	return '90348 90213849012849 0128490128 90421'
+	conn.wfile.write(123456789)
+	conn.wfile.write('\n')
+
+def mgmt_help(conn, args):
+	conn.wfile.write('commands:')
+
+	for item in conn.server.cmds:
+		conn.wfile.write(' ' + item[0])
+
+	conn.wfile.write('\n')
 
 server = tcp.ThreadedServer(('', 8090), tcp.RequestHandler)
 
 server.add_callback('list', mgmt_list)
 server.add_callback('fetch', mgmt_fetch)
+server.add_callback('help', mgmt_help)
 
 server.serve()

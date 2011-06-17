@@ -1,6 +1,8 @@
 import logging
 import SocketServer
 
+import static
+
 class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 	allow_reuse_address = 1
 
@@ -21,11 +23,12 @@ class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class RequestHandler(SocketServer.StreamRequestHandler):
 	def handle(self):
-		self.wfile.write('welcome\n')
+		self.wfile.write('graphd version ' + str(static.major) + '.' + str(static.minor) + '\n')
 
 		while 1:
 			unknown_cmd = True
 
+			self.wfile.write('# ')
 			line = self.rfile.readline().rstrip()
 			if not line: break
 
@@ -40,19 +43,10 @@ class RequestHandler(SocketServer.StreamRequestHandler):
 			if cmd == 'quit':
 				break
 
-			if cmd == 'help':
-				self.wfile.write('commands:')
-				for item in self.server.cmds:
-					self.wfile.write(' ' + item[0])
-
-				self.wfile.write('\n')
-				continue
-
 			for item in self.server.cmds:
 				if cmd == item[0]:
 					unknown_cmd = False
-					ret = item[1](args)
-					self.wfile.write(str(ret) + '\n')
+					item[1](self, args)
 					break
 
 			if unknown_cmd:
