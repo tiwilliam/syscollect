@@ -6,7 +6,7 @@ if [ ! -d /proc ]; then
 fi
 
 if [ "$1" == "config" ]; then
-	echo "interval 10"
+	echo "interval 60"
 	exit 0
 fi
 

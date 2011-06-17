@@ -70,7 +70,7 @@ class Repository():
 
 				if os.path.isfile(full_file_path):
 					dotfile = re.compile('^\.')
-					anysystem = re.compile('-any\.[\w\d]+$')
+					anysystem = re.compile('-noarch\.[\w\d]+$')
 					cursystem = re.compile('-' + self.system + '\.[\w\d]+$')
 
 					# Skip dot-files

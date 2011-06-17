@@ -2,6 +2,7 @@ import os
 import time
 import signal
 
+import tcp
 import util
 import repository
 
@@ -26,12 +27,6 @@ signal.signal(signal.SIGHUP, gotsignal)
 logger.info('You are running ' + system)
 
 repo = repository.Repository(path, system.lower(), ttl)
-
-# Setup TCP port and create CMD callbacks
-#
-# mgmt = tcp.listen('', 8090)
-# mgmt.callback('list', list_plugins)
-
 loaded_plugins = repo.get_plugins()
 
 if loaded_plugins:
@@ -41,5 +36,21 @@ else:
 	logger.error('No plugins found - bye')
 	os.sys.exit(1)
 
-while True:
-	time.sleep(1)
+def mgmt_list(args):
+	plist = ''
+	for p in loaded_plugins:
+		plist += p.id + ' '
+	return plist
+
+def mgmt_fetch(args):
+	if args:
+		plugin_id = args[1]
+
+	return '90348 90213849012849 0128490128 90421'
+
+server = tcp.ThreadedServer(('', 8090), tcp.RequestHandler)
+
+server.add_callback('list', mgmt_list)
+server.add_callback('fetch', mgmt_fetch)
+
+server.serve()

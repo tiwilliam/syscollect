@@ -20,6 +20,6 @@ cpu_iowait=$(cat /proc/stat | head -1 | awk '{ print $6 }')
 cpu_irq=$(cat /proc/stat | head -1 | awk '{ print $7 }')
 cpu_softirq=$(cat /proc/stat | head -1 | awk '{ print $8 }')
 
-for value in cpus cores cpu_user cpu_nice cpu_sys cpu_idle cpu_iowait cpu_irq cpu_softirq; do
+for value in cores cpu_user cpu_nice cpu_sys cpu_idle cpu_iowait cpu_irq cpu_softirq; do
 	echo "$value.value $[$value]"
 done
