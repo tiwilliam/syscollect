@@ -1,8 +1,14 @@
+import os
+import socket
 
 ttl = 300
-path = 'plugins'
+path = '/etc/graphd/plugins'
 loglevel = 'debug'
+
+name = 'graphd'
 
 major = 0
 minor = 5
 
+fqdn, host, ip = socket.gethostbyaddr(socket.gethostname())
+system = os.uname()[0]

@@ -5,12 +5,13 @@ import logging
 import subprocess
 
 import plugin
+import static
 
 class Repository():
-	def __init__(self, path, system, ttl):
-		self.ttl = ttl
+	def __init__(self, path):
+		self.ttl = static.ttl
 		self.path = path
-		self.system = system
+		self.system = static.system.lower()
 		self.logger = logging.getLogger('default')
 		self.load_plugins()
 

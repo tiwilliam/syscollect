@@ -23,12 +23,11 @@ class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class RequestHandler(SocketServer.StreamRequestHandler):
 	def handle(self):
-		self.wfile.write('graphd version ' + str(static.major) + '.' + str(static.minor) + '\n')
+		self.wfile.write('# ' + static.fqdn + ' ' + static.name + ' ' + str(static.major) + '.' + str(static.minor) + '\n')
 
 		while 1:
 			unknown_cmd = True
 
-			self.wfile.write('# ')
 			line = self.rfile.readline().rstrip()
 			if not line: break
 

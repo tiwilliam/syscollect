@@ -16,14 +16,13 @@ def gotsignal(signum, frame):
 		repo.reload_plugins()
 
 logger = util.logger(static.loglevel)
-system = os.uname()[0]
 
 signal.signal(signal.SIGINT, gotsignal)
 signal.signal(signal.SIGHUP, gotsignal)
 
-logger.info('Starting graphd version ' + str(static.major) + '.' + str(static.minor))
+logger.info('Starting ' + static.name + ' version ' + str(static.major) + '.' + str(static.minor))
 
-repo = repository.Repository(static.path, system.lower(), static.ttl)
+repo = repository.Repository(static.path)
 loaded_plugins = repo.get_plugins()
 
 if loaded_plugins:
