@@ -22,6 +22,15 @@ class Repository():
 				return self.plugins.pop(i)
 			i += 1
 
+	def get_plugin(self, id):
+		i = 0
+		for p in self.plugins:
+			if p.id == id:
+				return p
+			i += 1
+
+		return None
+
 	def get_plugins(self):
 		if hasattr(self, 'plugins'):
 			return self.plugins

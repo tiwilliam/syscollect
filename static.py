@@ -9,6 +9,8 @@ name = 'graphd'
 
 major = 0
 minor = 5
+patch = 0
+version = str(major) + '.' + str(minor) + '.' + str(patch)
 
 fqdn, host, ip = socket.gethostbyaddr(socket.gethostname())
 system = os.uname()[0]

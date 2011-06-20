@@ -23,7 +23,7 @@ class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class RequestHandler(SocketServer.StreamRequestHandler):
 	def handle(self):
-		self.wfile.write('# ' + static.fqdn + ' ' + static.name + ' ' + str(static.major) + '.' + str(static.minor) + '\n')
+		self.wfile.write('# ' + static.fqdn + ' ' + static.name + ' ' + static.version + '\n')
 
 		while 1:
 			unknown_cmd = True
