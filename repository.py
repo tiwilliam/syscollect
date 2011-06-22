@@ -102,11 +102,12 @@ class Repository():
 		files = self.read_dir()
 		self.plugins = []
 
-		for file in files:
-			try:
-				self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
-			except plugin.PluginError as e:
-				self.logger.error(e)
+		if files:
+			for file in files:
+				try:
+					self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
+				except plugin.PluginError as e:
+					self.logger.error(e)
 
 		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.path)
 
