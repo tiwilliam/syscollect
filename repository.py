@@ -13,7 +13,9 @@ class Repository():
 		self.path = path
 		self.system = static.system.lower()
 		self.logger = logging.getLogger('default')
-		self.load_plugins()
+		
+		self.load_plugins(self.path + '/noarch')
+		self.load_plugins(self.path + '/' + self.system)
 
 	def pop_plugin(self, id):
 		i = 0
@@ -46,7 +48,10 @@ class Repository():
 		new_ids = []
 
 		# Build up lists with identifers before and after reload
-		for new in self.read_dir():
+		for new in self.read_dir(self.path + '/noarch'):
+			new_ids += [new]
+		
+		for new in self.read_dir(self.path + '/' + self.system):
 			new_ids += [new]
 
 		for old in self.get_plugins():
@@ -70,36 +75,33 @@ class Repository():
 		# Start stopped plugins
 		self.start_plugins()
 
-	def read_dir(self):
+	def read_dir(self, plugin_path):
 		try:
-			files = os.listdir(self.path)
+			files = os.listdir(plugin_path)
 			plugins = []
 
 			for file in files:
-				full_file_path = self.path + '/' + file
+				full_file_path = plugin_path + '/' + file
 
 				if os.path.isfile(full_file_path):
 					dotfile = re.compile('^\.')
-					anysystem = re.compile('-noarch\.[\w\d]+$')
-					cursystem = re.compile('-' + self.system + '(\.[\w\d]+)?$')
+					srcfile = re.compile('\.c$')
 
-					# Skip dot-files
-					if dotfile.search(file):
-						self.logger.debug('Skipping dot-file: ' + file)
+					# Skip files
+					if dotfile.search(file) or srcfile.search(file):
+						self.logger.debug('Skipping file: ' + file)
 						continue
 
-					# Add plugin to polling list if os or any match
-					if cursystem.search(file) or anysystem.search(file):
-						plugins += [file]
+					plugins += [self.system + '/' + file]
 
 			return plugins
 		except OSError as e:
-			self.logger.error('Failed to read directory \'' + self.path + '\': ' + e.strerror)
+			self.logger.error('Failed to read directory \'' + plugin_path + '\': ' + e)
 			return None
 		
 
-	def load_plugins(self):
-		files = self.read_dir()
+	def load_plugins(self, path):
+		files = self.read_dir(path)
 		self.plugins = []
 
 		if files:
@@ -109,7 +111,7 @@ class Repository():
 				except plugin.PluginError as e:
 					self.logger.error(e)
 
-		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.path)
+		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + path)
 
 		return self.plugins
 

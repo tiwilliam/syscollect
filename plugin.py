@@ -9,23 +9,12 @@ import datastore
 
 class Plugin():
 	def __init__(self, file, path, ttl):
-		self.id = os.path.splitext(file)[0]
+		self.id = file
 		self.file = file
 		self.path = path
 		self.running = False
 		self.logger = logging.getLogger('default')
 		self.datastore = datastore.datastore(ttl)
-
-		# Parse plugin name, author and os
-		# loadavg-william-linux.sh
-		m = re.match(r'([\w\d.]+)-([\w\d.]+)-([\w\d.]+)', os.path.splitext(file)[0])
-
-		try:
-			self.name = m.group(1)
-			self.author = m.group(2)
-			self.os = m.group(3)
-		except:
-			raise PluginError('Invalid plugin name: ' + self.file + ': expected <name>-<author>-<os>')
 
 		# Set default values
 		self.interval = 10
