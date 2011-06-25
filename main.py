@@ -1,12 +1,16 @@
 import sys
 import time
-import json
 import signal
 
 import tcp
 import util
 import static
 import repository
+
+try:
+	import simplejson as json
+except ImportError:
+	import json
 
 def gotsignal(signum, frame):
 	if signum == signal.SIGINT:
@@ -51,26 +55,26 @@ def mgmt_fetch(conn, args):
 	host = conn.client_address[0]
 	port = str(conn.client_address[1])
 
-	try:
-		logger.info(host + ':' + port + ' - Fetching plugin data')
+#	try:
+	logger.info(host + ':' + port + ' - Fetching plugin data')
 
-		# Fetch all history we have
-		if len(args) == 1:
-			fetch_id = args[0]
-			fetch_plugin = repo.get_plugin(fetch_id)
-			if fetch_plugin:
-				data = json.dumps(fetch_plugin.datastore.data)
-				conn.wfile.write(data + '\n')
-			else:
-				conn.wfile.write('no such plugin: ' + fetch_id + '\n')
-		# Fetch history from offset specified
-		elif len(args) == 2:
-			fetch_id = args[0]
-			fetch_offset = args[1]
+	# Fetch all history we have
+	if len(args) == 1:
+		fetch_id = args[0]
+		fetch_plugin = repo.get_plugin(fetch_id)
+		if fetch_plugin:
+			data = json.dumps(fetch_plugin.datastore.data)
+			conn.wfile.write(data + '\n')
+		else:
+			conn.wfile.write('no such plugin: ' + fetch_id + '\n')
+	# Fetch history from offset specified
+	elif len(args) == 2:
+		fetch_id = args[0]
+		fetch_offset = args[1]
 
-	except:
-		logger.info(host + ':' + port + ' - Failed fetching plugin data')
-		conn.wfile.write('usage: fetch <plugin id> [<uptime offset>]\n')
+#	except:
+#		logger.info(host + ':' + port + ' - Failed fetching plugin data')
+#		conn.wfile.write('usage: fetch <plugin id> [<uptime offset>]\n')
 
 # List all commands
 def mgmt_help(conn, args):
