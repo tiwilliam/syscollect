@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	get_cpu_ticks();
+	int ret = get_cpu_ticks();
 	
-	return 0;
+	return ret;
 }
 
 void get_cpu_ticks()
@@ -35,16 +35,24 @@ void get_cpu_ticks()
 	err = host_info(host_port, HOST_BASIC_INFO, (host_info_t) &basic_info, &count);
 	
 	if (err)
+	{
 		printf("Failed to get host basic info\n");
+		return 1;
+	}
 	
 	count = HOST_CPU_LOAD_INFO_COUNT;
 	err = host_statistics(host_port, HOST_CPU_LOAD_INFO, (host_info_t) &cpu_load, &count);
 	
 	if (err)
+	{
 		printf("Failed to get cpu load info\n");
+		return 1;
+	}
 	
+	/*
 	if (basic_info.logical_cpu > 0)
 		cpus = basic_info.avail_cpus / basic_info.logical_cpu;
+	*/
 	
 	cores = basic_info.avail_cpus;
 	user = cpu_load.cpu_ticks[CPU_STATE_USER];
