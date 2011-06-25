@@ -7,7 +7,7 @@ import subprocess
 import ttimer
 import datastore
 
-class Plugin():
+class Plugin:
 	def __init__(self, file, path, ttl):
 		self.id = file
 		self.file = file
@@ -43,7 +43,7 @@ class Plugin():
 
 			return self.parse_config(config_list)
 
-		except OSError as e:
+		except OSError, e:
 			self.logger.error('Failed to get config: ' + file_path + ': ' + e.strerror)
 
 			return None

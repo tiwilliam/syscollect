@@ -11,7 +11,6 @@ import repository
 def gotsignal(signum, frame):
 	if signum == signal.SIGINT:
 		logger.info('Received interrupt signal - bye')
-		server.shutdown()
 		sys.exit(0)
 	if signum == signal.SIGHUP:
 		logger.info('Reloading plugin directory')

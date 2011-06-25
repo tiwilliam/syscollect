@@ -1,7 +1,7 @@
 import os
 import time
 
-class datastore():
+class datastore:
 	def __init__(self, ttl):
 		self.data = {}
 		self.ttl = ttl

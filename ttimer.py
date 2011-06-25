@@ -2,7 +2,7 @@ import sys
 import time
 import thread
 
-class ttimer():
+class ttimer:
 	def __init__(self, interval, cbfunc, cbparam=[]):
 		self.running = True
 		self.interval = interval

@@ -7,7 +7,7 @@ import subprocess
 import plugin
 import static
 
-class Repository():
+class Repository:
 	def __init__(self, path):
 		self.ttl = static.ttl
 		self.path = path
@@ -95,7 +95,7 @@ class Repository():
 					plugins += [self.system + '/' + file]
 
 			return plugins
-		except OSError as e:
+		except OSError, e:
 			self.logger.error('Failed to read directory \'' + plugin_path + '\': ' + e.strerror)
 			return None
 		
@@ -108,7 +108,7 @@ class Repository():
 			for file in files:
 				try:
 					self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
-				except plugin.PluginError as e:
+				except plugin.PluginError, e:
 					self.logger.error(e)
 
 		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + path)

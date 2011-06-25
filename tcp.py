@@ -13,10 +13,7 @@ class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 		self.logger = logging.getLogger('default')
 
 	def serve(self):
-		try:
-			self.serve_forever()
-		except:
-			self.shutdown()
+		self.serve_forever()
 
 	def add_callback(self, cmd, callback):
 		self.cmds += [(cmd, callback)]
