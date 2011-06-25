@@ -25,7 +25,7 @@ class Plugin():
 			self.author = m.group(2)
 			self.os = m.group(3)
 		except:
-			raise PluginError('Invalid plugin name: ' + self.file + ': expected <name>-<author>-<os>.<ext>')
+			raise PluginError('Invalid plugin name: ' + self.file + ': expected <name>-<author>-<os>')
 
 		# Set default values
 		self.interval = 10

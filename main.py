@@ -1,4 +1,4 @@
-import os
+import sys
 import time
 import json
 import signal
@@ -11,7 +11,8 @@ import repository
 def gotsignal(signum, frame):
 	if signum == signal.SIGINT:
 		logger.info('Received interrupt signal - bye')
-		os.sys.exit(0)
+		server.shutdown()
+		sys.exit(0)
 	if signum == signal.SIGHUP:
 		logger.info('Reloading plugin directory')
 		repo.reload_plugins()
@@ -31,7 +32,7 @@ if loaded_plugins:
 		p.start()
 else:
 	logger.error('No plugins found - bye')
-	os.sys.exit(1)
+	sys.exit(1)
 
 def mgmt_list(conn, args):
 	host = conn.client_address[0]
