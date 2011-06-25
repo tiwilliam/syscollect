@@ -7,7 +7,7 @@ fi
 
 if [ "$1" == "config" ]; then
 	echo "interval 5"
-	exit 0
+	exit
 fi
 
 cpus=$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)

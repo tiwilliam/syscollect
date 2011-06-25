@@ -7,7 +7,7 @@ fi
 
 if [ "$1" == "config" ]; then
 	echo "interval 60"
-	exit 0
+	exit
 fi
 
 uptime=$(cat /proc/uptime | cut -d ' ' -f 1)

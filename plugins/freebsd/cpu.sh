@@ -2,7 +2,7 @@
 
 if [ "$1" = "config" ]; then
 	echo "interval 5"
-	exit 0
+	exit
 fi
 
 cores=$(/sbin/sysctl hw.ncpu | cut -d ':' -f 2)
