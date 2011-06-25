@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include <mach/host_info.h>
 
 int get_cpu_ticks();
