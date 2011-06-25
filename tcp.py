@@ -3,11 +3,11 @@ import SocketServer
 
 import static
 
-class ThreadedServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ThreadedServer(SocketServer.ThreadingTCPServer):
 	allow_reuse_address = 1
 
 	def __init__(self, server_address, request_handler_class):
-		SocketServer.TCPServer.__init__(self, server_address, request_handler_class)
+		SocketServer.ThreadingTCPServer.__init__(self, server_address, request_handler_class)
 
 		self.cmds = []
 		self.logger = logging.getLogger('default')
