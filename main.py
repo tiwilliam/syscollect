@@ -22,7 +22,7 @@ logger = util.logger(static.loglevel)
 signal.signal(signal.SIGINT, gotsignal)
 signal.signal(signal.SIGHUP, gotsignal)
 
-logger.info('Starting ' + static.name + ' version ' + static.version)
+logger.info('Starting ' + static.name + ' version ' + static.version + ' (' + static.fqdn + ')')
 
 repo = repository.Repository(static.path)
 loaded_plugins = repo.get_plugins()
