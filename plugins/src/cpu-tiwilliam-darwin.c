@@ -2,7 +2,7 @@
 
 #include <mach/host_info.h>
 
-void get_cpu_ticks();
+int get_cpu_ticks();
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	return ret;
 }
 
-void get_cpu_ticks()
+int get_cpu_ticks()
 {
 	int err;
 	mach_msg_type_number_t count;
@@ -65,4 +65,6 @@ void get_cpu_ticks()
 	printf("cpu_nice.value %d\n", nice);
 	printf("cpu_sys.value %d\n", sys);
 	printf("cpu_idle.value %d\n", idle);
+	
+	return 0;
 }
