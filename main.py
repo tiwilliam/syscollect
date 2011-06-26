@@ -66,10 +66,10 @@ def mgmt_fetch(conn, args):
 				for k in fetch_plugin.datastore.data:
 					ret_data[k] = {}
 					# Loop each timestamp
-					for ts in fetch_plugin.datastore.data[k].keys():
+					for ts in fetch_plugin.datastore.data[k]:
 						# Get rid of data before our timestamp
-						if int(ts) > int(fetch_offset):
-							ret_data[k][ts] = fetch_plugin.datastore.data[k][ts]
+						if int(ts[0]) > int(fetch_offset):
+							ret_data[k] += [ts]
 
 				data = json.dumps(ret_data)
 				conn.wfile.write(data + '\n')
