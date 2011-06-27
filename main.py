@@ -34,7 +34,7 @@ def mgmt_list(conn, args):
 	for p in loaded_plugins:
 		plist += p.id + ' '
 
-	conn.wfile.write(plist)
+	conn.wfile.write(plist.rstrip())
 	conn.wfile.write('\n')
 
 # Fetch data for specified plugin
@@ -57,18 +57,18 @@ def mgmt_fetch(conn, args):
 		# Fetch history from offset specified
 		elif len(args) == 2:
 			fetch_id = args[0]
-			fetch_offset = args[1]
+			fetch_offset = int(args[1])
 			fetch_plugin = repo.get_plugin(fetch_id)
 
 			if fetch_plugin:
 				ret_data = {}
 				# Loop plugin values
 				for k in fetch_plugin.datastore.data:
-					ret_data[k] = {}
+					ret_data[k] = []
 					# Loop each timestamp
 					for ts in fetch_plugin.datastore.data[k]:
 						# Get rid of data before our timestamp
-						if int(ts[0]) > int(fetch_offset):
+						if int(ts[0]) > fetch_offset:
 							ret_data[k] += [ts]
 
 				data = json.dumps(ret_data)
