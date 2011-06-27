@@ -1,15 +1,15 @@
-# Large server environment graphing made easy - graphd
+# Cross-platform graph data server
 
-<placeholder>
+Graphd have as goal to make server graphing easy.
 
 ## Poll second interval data from nodes buffer via TCP
 
-<placeholder>
+Placeholder text.
 
 ## Self-announcing nodes
 
-<placeholder>
+Placeholder text.
 
 ## Add your own plugins
 
-<placeholder>
+Placeholder text.
