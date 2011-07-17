@@ -14,11 +14,17 @@ except ImportError:
 
 ## Signal handler ######################################################
 
+def addsignal(signum, func):
+	try:
+		signal.signal(signum, func)
+	except ValueError:
+		logger.warn('Signal not supported in ' + static.system + ': ' + str(signum))
+
 def gotsignal(signum, frame):
-	if signum == signal.SIGINT:
+	if signum == 2: # SIGINT
 		logger.info('Received interrupt signal - bye')
 		sys.exit(0)
-	if signum == signal.SIGHUP:
+	if signum == 1: # SIGHUP
 		logger.info('Reloading plugin directory')
 		repo.reload_plugins()
 
@@ -102,8 +108,8 @@ def mgmt_reload(conn, args):
 
 logger = util.logger(static.loglevel)
 
-signal.signal(signal.SIGINT, gotsignal)
-signal.signal(signal.SIGHUP, gotsignal)
+addsignal(1, gotsignal) # SIGHUP - Not supported on Windows
+addsignal(2, gotsignal) # SIGINT
 
 logger.info('Starting ' + static.name + ' version ' + static.version + ' (' + static.fqdn + ')')
 

@@ -1,10 +1,13 @@
 import os
 import socket
 
-ttl = 300
-path = '/etc/graphd/plugins'
-loglevel = 'debug'
+try:
+    system = os.uname()[0]
+except:
+    system = 'Windows'
 
+ttl = 300
+loglevel = 'debug'
 name = 'graphd'
 
 major = 0
@@ -14,7 +17,7 @@ version = str(major) + '.' + str(minor) + '.' + str(patch)
 
 fqdn = socket.gethostname()
 
-try:
-    system = os.uname()[0]
-except:
-    system = 'Windows'
+if system == 'Windows':
+	path = os.getenv('PROGRAMFILES', 'C:\\Program Files') + '\\' + name + '\\plugins'
+else:
+	path = '/etc/' + name.lower() + '/plugins'
