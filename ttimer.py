@@ -1,6 +1,10 @@
 import sys
 import time
-import thread
+
+try:
+        import thread
+except ImportError:
+        import _thread as thread
 
 class ttimer:
 	def __init__(self, interval, cbfunc, cbparam=[]):

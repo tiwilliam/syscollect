@@ -1,13 +1,17 @@
 import logging
-import SocketServer
+
+try:
+        import socketserver
+except ImportError:
+        import SocketServer as socketserver
 
 import static
 
-class ThreadedServer(SocketServer.ThreadingTCPServer):
+class ThreadedServer(socketserver.ThreadingTCPServer):
 	allow_reuse_address = 1
 
 	def __init__(self, server_address, request_handler_class):
-		SocketServer.ThreadingTCPServer.__init__(self, server_address, request_handler_class)
+		socketserver.ThreadingTCPServer.__init__(self, server_address, request_handler_class)
 
 		self.cmds = []
 		self.logger = logging.getLogger('default')
@@ -18,7 +22,7 @@ class ThreadedServer(SocketServer.ThreadingTCPServer):
 	def add_callback(self, cmd, callback):
 		self.cmds += [(cmd, callback)]
 
-class RequestHandler(SocketServer.StreamRequestHandler):
+class RequestHandler(socketserver.StreamRequestHandler):
 	def handle(self):
 		self.wfile.write('# ' + static.fqdn + ' ' + static.name + ' ' + static.version + '\n')
 
@@ -49,13 +53,13 @@ class RequestHandler(SocketServer.StreamRequestHandler):
 				self.wfile.write('unknown command: ' + cmd + '\n')
 
 	def setup(self):
-		SocketServer.StreamRequestHandler.setup(self)
+		socketserver.StreamRequestHandler.setup(self)
 		host = self.client_address[0]
 		port = str(self.client_address[1])
 		self.server.logger.info(host + ':' + port + ' connected')
 
 	def finish(self):
-		SocketServer.StreamRequestHandler.finish(self)
+		socketserver.StreamRequestHandler.finish(self)
 		host = self.client_address[0]
 		port = str(self.client_address[1])
 		self.server.logger.info(host + ':' + port + ' disconnected')

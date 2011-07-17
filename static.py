@@ -13,4 +13,8 @@ patch = 0
 version = str(major) + '.' + str(minor) + '.' + str(patch)
 
 fqdn = socket.gethostname()
-system = os.uname()[0]
+
+try:
+    system = os.uname()[0]
+except:
+    system = 'Windows'
