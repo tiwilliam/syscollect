@@ -43,7 +43,7 @@ class Plugin:
 
 			return self.parse_config(config_list)
 
-		except OSError, e:
+		except OSError as e:
 			self.logger.error('Failed to get config: ' + file_path + ': ' + e.strerror)
 
 			return None

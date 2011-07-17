@@ -1,4 +1,4 @@
-## Cross-platform graph data server
+# Cross-platform graph data server
 
 Graphd have as goal to make server graphing easy and platform independent.
 

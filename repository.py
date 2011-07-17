@@ -95,7 +95,7 @@ class Repository:
 					plugins += [self.system + '/' + file]
 
 			return plugins
-		except OSError, e:
+		except OSError as e:
 			self.logger.error('Failed to read directory \'' + plugin_path + '\': ' + e.strerror)
 			return None
 		
@@ -108,7 +108,7 @@ class Repository:
 			for file in files:
 				try:
 					self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
-				except plugin.PluginError, e:
+				except plugin.PluginError as e:
 					self.logger.error(e)
 
 		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + path)
