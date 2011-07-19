@@ -8,6 +8,7 @@ Currently supported platforms:
 * FreeBSD
 * OpenBSD
 * Darwin
+* Windows
 
 ### How does it work?
 
