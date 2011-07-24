@@ -30,18 +30,38 @@ def gotsignal(signum, frame):
 
 ## TCP MGMT functions ##################################################
 
-def mgmt_list(conn, args):
-	host = conn.client_address[0]
-	port = str(conn.client_address[1])
-	logger.info(host + ':' + port + ' - Listing all plugins')
-
-	plist = ''
+def list_plugins(kind):
+	plist = []
 
 	for p in loaded_plugins:
-		plist += p.id + ' '
+		if p.type == kind:
+			plist += [p.id]
 
-	conn.wfile.write(plist.rstrip())
-	conn.wfile.write('\n')
+	return plist
+
+def mgmt_lsinfo(conn, args):
+	kind = 'info'
+
+	host = conn.client_address[0]
+	port = str(conn.client_address[1])
+	logger.info(host + ':' + port + ' - Listing ' + kind + ' plugins')
+
+	plist = list_plugins(kind)
+
+	data = json.dumps(plist)
+	conn.wfile.write(data + '\n')
+
+def mgmt_lsgraph(conn, args):
+	kind = 'graph'
+
+	host = conn.client_address[0]
+	port = str(conn.client_address[1])
+	logger.info(host + ':' + port + ' - Listing ' + kind + ' plugins')
+
+	plist = list_plugins(kind)
+
+	data = json.dumps(plist)
+	conn.wfile.write(data + '\n')
 
 # Fetch data for specified plugin
 def mgmt_fetch(conn, args):
@@ -125,7 +145,8 @@ else:
 
 server = tcp.ThreadedServer(('', 8090), tcp.RequestHandler)
 
-server.add_callback('list', mgmt_list)
+server.add_callback('lsinfo', mgmt_lsinfo)
+server.add_callback('lsgraph', mgmt_lsgraph)
 server.add_callback('fetch', mgmt_fetch)
 server.add_callback('reload', mgmt_reload)
 server.add_callback('help', mgmt_help)
