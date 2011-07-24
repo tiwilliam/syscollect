@@ -2,4 +2,4 @@
 
 model=$(grep "model name" /proc/cpuinfo | cut -d ':' -f 2 | head -1 | sed 's/[ ]\+/ /g' | sed 's/ //')
 
-echo $model
+echo "cpu_model.value $model"

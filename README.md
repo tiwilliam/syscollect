@@ -17,12 +17,15 @@ Currently supported platforms:
 
 	lsgraph
 	["darwin/cpu", "darwin/loadavg"]
-
 	fetch darwin/cpu
 	{"cpu_nice": [[1309200447, "15"], [1309200452, "15"], [1309200457, "16"], [1309200462, "16"]...}
-
 	fetch darwin/cpu 1309200462
 	{"cpu_nice": [[1309200467, "16"], [1309200472, "18"], [1309200477, "18"], [1309200482, "19"]...}
+
+	lsinfo
+	["darwin/os_version"]
+	fetch darwin/os_version
+	{"os_version": [[1309200467, "Mac OS X 10.7"]]}
 
 ### Write your own plugins
 
@@ -41,3 +44,5 @@ Currently supported platforms:
 	-rw-r--r--  1 wille  staff   102 Jun 25 15:55 cpu.conf
 	-rwxr-xr-x  1 wille  staff   391 Jun 25 15:27 loadavg
 	-rw-r--r--  1 wille  staff   102 Jun 25 15:27 loadavg.conf
+	-rwxr-xr-x  1 wille  staff   405 Jun 25 16:23 os_version
+	-rw-r--r--  1 wille  staff   125 Jun 25 16:23 os_version.conf
