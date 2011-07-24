@@ -5,11 +5,6 @@ if [ ! -d /proc ]; then
 	exit 1
 fi
 
-if [ "$1" == "config" ]; then
-	echo "interval 5"
-	exit
-fi
-
 cpus=$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)
 cores=$(cat /proc/cpuinfo | grep -c "core id")
 cpu_user=$(cat /proc/stat | head -1 | awk '{ print $2 }')

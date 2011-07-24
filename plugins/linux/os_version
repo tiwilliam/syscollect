@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -f /etc/debian_version ]; then
+	version="Debian $(cat /etc/debian_version)"
+fi
+
+echo $version

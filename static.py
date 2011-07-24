@@ -9,6 +9,7 @@ except:
 ttl = 300
 loglevel = 'debug'
 name = 'graphd'
+ignoresuffix = [ 'conf', 'c' ]
 
 major = 0
 minor = 5

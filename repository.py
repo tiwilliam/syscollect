@@ -84,11 +84,13 @@ class Repository:
 				full_file_path = plugin_path + '/' + file
 
 				if os.path.isfile(full_file_path):
+					ignoresuffix = "|".join(static.ignoresuffix)
+
 					dotfile = re.compile('^\.')
-					srcfile = re.compile('\.c$')
+					ignore = re.compile('\.(' + ignoresuffix + ')$')
 
 					# Skip files
-					if dotfile.search(file) or srcfile.search(file):
+					if dotfile.search(file) or ignore.search(file):
 						self.logger.debug('Skipping file: ' + file)
 						continue
 

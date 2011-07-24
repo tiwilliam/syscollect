@@ -18,6 +18,7 @@ class Plugin:
 
 		# Set default values
 		self.interval = 10
+		self.type = 'graph'
 
 		# Override defaults with values from plugin
 		if self.path and self.file:
@@ -27,18 +28,14 @@ class Plugin:
 		self.t = ttimer.ttimer(self.interval, self.execute)
 
 	def read_config(self):
-		file_path = self.path + '/' + self.file
+		file_path = self.path + '/' + self.file + '.conf'
 
 		try:
-			proc = subprocess.Popen(
-				[file_path, 'config'],
-				stdout = subprocess.PIPE,
-				stderr = subprocess.PIPE
-			)
+			f = open(file_path, "r")
+			text = f.read()
+			f.close()
 
-			stdout, stderr = proc.communicate()
-
-			config = stdout.strip()
+			config = text.strip()
 			config_list = config.split('\n')
 
 			return self.parse_config(config_list)
@@ -52,6 +49,7 @@ class Plugin:
 	def start(self):
 		self.logger.debug('Start polling ' + self.id + ' with interval ' + str(self.interval))
 		self.running = True
+		self.execute()
 		self.t.start()
 
 	def stop(self):
@@ -62,7 +60,7 @@ class Plugin:
 	def status(self):
 		return self.running
 
-	def execute(self, args):
+	def execute(self, args = None):
 		self.logger.debug('Running ' + self.id)
 
 		try:
@@ -80,7 +78,7 @@ class Plugin:
 			for line in stdout.split('\n'):
 				if line:
 					# Parse values returned from plugin
-					match = re.match(r'(.*)\.value ([\d.]+)$', line)
+					match = re.match(r'(.*)\.value (.+)$', line)
 
 					# If we find 'something.value 123', keep it
 					if match:
@@ -104,17 +102,18 @@ class Plugin:
 
 	def parse_config(self, config):
 		for prop in config:
-			prop = prop.split(' ')
+			prop = prop.strip().replace('\t', ' ')
+			prop_tuple = prop.partition(' ')
 			if len(prop) >= 2:
-				var = prop[0]
-				val = prop[1]
+				var = prop_tuple[0]
+				val = prop_tuple[2].strip()
 
 				if var == 'interval':
 					self.interval = int(val)
-				#elif var == 'title':
-				#	self.title = val
+				elif var == 'type':
+					self.type = val
 				else:
-					self.logger.warn('Unknown config property: ' + var)
+					self.logger.warn(self.id + ': Unknown config property: ' + var)
 
 class PluginError(Exception):
 	def __init__(self, value):

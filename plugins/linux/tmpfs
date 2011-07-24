@@ -5,12 +5,7 @@ if [ ! -d /proc ]; then
 	exit 1
 fi
 
-if [ "$1" == "config" ]; then
-	echo "interval 30"
-	exit
-fi
-
-mounts=$(cat /proc/mounts | egrep -v "^none|rootfs|tmpfs|udev|devpts|usbfs" | cut -d ' ' -f 2)
+mounts=$(cat /proc/mounts | egrep "^tmpfs" | cut -d ' ' -f 2)
 
 for mount in $mounts; do
 	total=$(df $mount | tail -1 | awk '{ print $2 }')
