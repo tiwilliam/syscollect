@@ -1,7 +1,13 @@
 #!/bin/bash
 
-if [ -f /etc/debian_version ]; then
+if [ -f /etc/debian_version ]; then # Debian
 	version="Debian $(cat /etc/debian_version)"
+elif [ -f /etc/redhat_version ]; then # Red Hat / CentOS
+	version="$(cat /etc/redhat_version)"
+elif [ -f /etc/lsb-release ]; then # Ubuntu
+	version="$(source /etc/lsb-release; echo $DISTRIB_DESCRIPTION)"
+else
+	version="Unknown"
 fi
 
 echo "os_version.value $version"
