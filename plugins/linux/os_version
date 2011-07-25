@@ -3,7 +3,7 @@
 if [ -f /usr/bin/lsb_release ]; then
 	version="$(/usr/bin/lsb_release -d -s)"
 elif [ -f /etc/redhat_version ]; then
-	version="$(cat /etc/redhat_version)"
+	version="$(cat /etc/redhat-release)"
 else
 	version="Unknown"
 fi
