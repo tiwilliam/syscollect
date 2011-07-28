@@ -57,7 +57,7 @@ class Repository:
 
 			return plugins
 		except OSError as e:
-			self.logger.error('Failed to read directory \'' + plugin_path + '\': ' + e.strerror)
+			self.logger.error('Failed to read directory \'' + self.plug_path + '/' + arch + '\': ' + e.strerror)
 			return None
 		
 
