@@ -5,7 +5,7 @@ if [ ! -d /proc ]; then
 	exit 1
 fi
 
-mounts=$(cat /proc/mounts | egrep -v "^none|rootfs|tmpfs|udev|devpts|usbfs" | cut -d ' ' -f 2)
+mounts=$(cat /proc/mounts | egrep -v "^none|rootfs|tmpfs|udev|devpts|usbfs|fusectl" | cut -d ' ' -f 2)
 
 for mount in $mounts; do
 	total=$(df -P $mount | tail -1 | awk '{ print $2 }')
