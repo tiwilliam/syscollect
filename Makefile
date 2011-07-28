@@ -3,5 +3,5 @@ PLUGIN_OBJECTS := $(patsubst %.c,%.o,$(wildcard plugins/*/*.c))
 
 all: $(PLUGIN_OBJECTS)
 
-%.o: %.c
+%: %.c
 	$(CC) $< -o $@

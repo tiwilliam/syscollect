@@ -9,7 +9,9 @@ except:
 ttl = 300
 loglevel = 'debug'
 name = 'graphd'
-ignoresuffix = [ 'conf', 'c' ]
+
+types = [ 'graph', 'info' ]
+ignoresuffix = [ 'disabled', 'c' ]
 
 major = 0
 minor = 5
@@ -19,6 +21,8 @@ version = str(major) + '.' + str(minor) + '.' + str(patch)
 fqdn = socket.gethostname()
 
 if system == 'Windows':
-	path = os.getenv('PROGRAMFILES', 'C:\\Program Files') + '\\' + name + '\\plugins'
+	plug_path = os.getenv('PROGRAMFILES', 'C:\\Program Files') + '\\' + name + '\\plug'
+	conf_path = os.getenv('PROGRAMFILES', 'C:\\Program Files') + '\\' + name + '\\conf'
 else:
-	path = '/etc/' + name.lower() + '/plugins'
+	plug_path = '/etc/' + name.lower() + '/plug'
+	conf_path = '/etc/' + name.lower() + '/conf'

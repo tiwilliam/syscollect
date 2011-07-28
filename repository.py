@@ -8,26 +8,27 @@ import plugin
 import static
 
 class Repository:
-	def __init__(self, path):
+	def __init__(self):
 		self.ttl = static.ttl
-		self.path = path
+		self.plug_path = static.plug_path
+		self.conf_path = static.conf_path
 		self.system = static.system.lower()
 		self.logger = logging.getLogger('default')
 		
-		self.load_plugins(self.path + '/noarch')
-		self.load_plugins(self.path + '/' + self.system)
+		self.load_plugins('noarch')
+		self.load_plugins(self.system)
 
 	def pop_plugin(self, id):
 		i = 0
 		for p in self.plugins:
-			if p.id == id:
+			if p.file == id:
 				return self.plugins.pop(i)
 			i += 1
 
 	def get_plugin(self, id):
 		i = 0
 		for p in self.plugins:
-			if p.id == id:
+			if p.file == id:
 				return p
 			i += 1
 
@@ -43,58 +44,16 @@ class Repository:
 		for p in self.plugins:
 			if not p.status(): p.start()
 
-	def reload_plugins(self):
-		old_ids = []
-		new_ids = []
-
-		# Build up lists with identifers before and after reload
-		for new in self.read_dir(self.path + '/noarch'):
-			new_ids += [new]
-		
-		for new in self.read_dir(self.path + '/' + self.system):
-			new_ids += [new]
-
-		for old in self.get_plugins():
-			old_ids += [old.id]
-
-		removed_plugins = set(old_ids) - set(new_ids)
-		added_plugins = set(new_ids) - set(old_ids)
-
-		# Stop threads for plugins that have been removed
-		for p in removed_plugins:
-			old_plugin = self.pop_plugin(p)
-			if old_plugin:
-				old_plugin.stop()
-				del old_plugin
-
-		# Add new plugins to list
-		for p in added_plugins:
-			self.logger.info('Adding ' + p + ' to polling list')
-			self.plugins += [plugin.Plugin(p, self.path, self.ttl)]
-
-		# Start stopped plugins
-		self.start_plugins()
-
-	def read_dir(self, plugin_path):
+	def read_plugdir(self, arch):
 		try:
-			files = os.listdir(plugin_path)
+			files = os.listdir(self.plug_path + '/' + arch)
 			plugins = []
 
 			for file in files:
-				full_file_path = plugin_path + '/' + file
+				full_file_path = self.plug_path + '/' + arch + '/' + file
 
 				if os.path.isfile(full_file_path):
-					ignoresuffix = "|".join(static.ignoresuffix)
-
-					dotfile = re.compile('^\.')
-					ignore = re.compile('\.(' + ignoresuffix + ')$')
-
-					# Skip files
-					if dotfile.search(file) or ignore.search(file):
-						self.logger.debug('Skipping file: ' + file)
-						continue
-
-					plugins += [self.system + '/' + file]
+					plugins += [arch + '/' + file]
 
 			return plugins
 		except OSError as e:
@@ -102,18 +61,29 @@ class Repository:
 			return None
 		
 
-	def load_plugins(self, path):
-		files = self.read_dir(path)
+	def load_plugins(self, arch):
+		files = self.read_plugdir(arch)
 		self.plugins = []
 
 		if files:
 			for file in files:
-				try:
-					self.plugins += [plugin.Plugin(file, self.path, self.ttl)]
-				except plugin.PluginError as e:
-					self.logger.error(e)
+				ignoresuffix = "|".join(static.ignoresuffix)
 
-		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + path)
+				dotfile = re.compile('^\.')
+				ignore = re.compile('\.(' + ignoresuffix + ')$')
+
+				# Skip dot files and file extensions listed in static.ignoresuffix
+				if dotfile.search(file) or ignore.search(file):
+					self.logger.debug('Skipping file: ' + file)
+					continue
+
+				try:
+					new_plug = plugin.Plugin(file, self.plug_path, self.conf_path, self.ttl)
+					self.plugins += [new_plug]
+				except ValueError as e:
+					self.logger.error(file + ': Failed to load plugin: ' + str(e))
+
+		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.plug_path + '/' + arch)
 
 		return self.plugins
 

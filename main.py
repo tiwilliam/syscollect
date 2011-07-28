@@ -24,9 +24,9 @@ def gotsignal(signum, frame):
 	if signum == 2: # SIGINT
 		logger.info('Received interrupt signal - bye')
 		sys.exit(0)
-	if signum == 1: # SIGHUP
-		logger.info('Reloading plugin directory')
-		repo.reload_plugins()
+#	if signum == 1: # SIGHUP
+#		logger.info('Reloading plugin directory')
+#		repo.reload_plugins()
 
 ## TCP MGMT functions ##################################################
 
@@ -35,7 +35,7 @@ def list_plugins(kind):
 
 	for p in loaded_plugins:
 		if p.type == kind:
-			plist += [p.id]
+			plist += [p.file]
 
 	return plist
 
@@ -75,6 +75,7 @@ def mgmt_fetch(conn, args):
 		if len(args) == 1:
 			fetch_id = args[0]
 			fetch_plugin = repo.get_plugin(fetch_id)
+
 			if fetch_plugin:
 				data = json.dumps(fetch_plugin.datastore.data)
 				conn.wfile.write(data + '\n')
@@ -117,12 +118,12 @@ def mgmt_help(conn, args):
 	conn.wfile.write('\n')
 
 # Reload plugin directory
-def mgmt_reload(conn, args):
-	host = conn.client_address[0]
-	port = str(conn.client_address[1])
-	logger.info(host + ':' + port + ' - Reloading plugin directory')
-
-	repo.reload_plugins()
+#def mgmt_reload(conn, args):
+#	host = conn.client_address[0]
+#	port = str(conn.client_address[1])
+#	logger.info(host + ':' + port + ' - Reloading plugin directory')
+#
+#	repo.reload_plugins()
 
 ## Main program ########################################################
 
@@ -133,7 +134,7 @@ addsignal(2, gotsignal) # SIGINT
 
 logger.info('Starting ' + static.name + ' version ' + static.version + ' (' + static.fqdn + ')')
 
-repo = repository.Repository(static.path)
+repo = repository.Repository()
 loaded_plugins = repo.get_plugins()
 
 if loaded_plugins:
@@ -148,7 +149,7 @@ server = tcp.ThreadedServer(('', 8090), tcp.RequestHandler)
 server.add_callback('lsinfo', mgmt_lsinfo)
 server.add_callback('lsgraph', mgmt_lsgraph)
 server.add_callback('fetch', mgmt_fetch)
-server.add_callback('reload', mgmt_reload)
+#server.add_callback('reload', mgmt_reload)
 server.add_callback('help', mgmt_help)
 
 server.serve()
