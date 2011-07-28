@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -d /proc ]; then
-	echo "Error: No proc filesystem not found"
+	echo "Error: No proc fs found"
 	exit 1
 fi
 
@@ -11,7 +11,7 @@ for mount in $mounts; do
 	total=$(df $mount | tail -1 | awk '{ print $2 }')
 	used=$(df $mount | tail -1 | awk '{ print $3 }')
 	free=$(df $mount | tail -1 | awk '{ print $4 }')
-	echo "${mount}_total.value $total"
-	echo "${mount}_used.value $used"
-	echo "${mount}_free.value $free"
+	echo "${mount}.total $total"
+	echo "${mount}.used $used"
+	echo "${mount}.free $free"
 done

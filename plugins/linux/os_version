@@ -8,4 +8,4 @@ else
 	version="Unknown"
 fi
 
-echo "os_version.value $version"
+echo "os_version $version"

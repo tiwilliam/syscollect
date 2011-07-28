@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [ ! -d /proc ]; then
-	echo "Error: No proc filesystem not found"
+	echo "Error: No proc fs found"
 	exit 1
 fi
 
 threads=$(ps -AT | egrep -vc "PID|TTY")
 maxthreads=$(cat /proc/sys/kernel/threads-max)
 
-echo "maxtreads.value $maxthreads"
-echo "treads.value $threads"
+echo "maxtreads $maxthreads"
+echo "treads $threads"
