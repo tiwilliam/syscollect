@@ -26,6 +26,9 @@ class Plugin:
 		plug_name = file_split[len(file_split) - 1]
 		plug_type = plug_name.split('_')[0]
 
+		# Get rid of file extension
+		self.filenoext = os.path.splitext(self.file)[0]
+
 		if plug_type in static.types:
 			self.type = plug_type
 		else:
@@ -39,7 +42,7 @@ class Plugin:
 		self.t = ttimer.ttimer(self.interval, self.execute)
 
 	def read_config(self):
-		file_path = self.conf_path + '/' + self.file + '.conf'
+		file_path = self.conf_path + '/' + self.filenoext + '.conf'
 
 		try:
 			f = open(file_path, "r")
