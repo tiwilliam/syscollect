@@ -4,10 +4,10 @@ import sys
 import time
 import signal
 
-import tcp
-import util
-import static
-import repository
+import lib.tcp as tcp
+import lib.util as util
+import lib.static as static
+import lib.repository as repository
 
 try:
 	import simplejson as json
