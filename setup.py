@@ -15,7 +15,6 @@ setup(
 	keywords = "graphd graph monitoring monitor",
 	url = "https://github.com/tiwilliam/graphd",
 	packages = ['graphd'],
-	scripts = ['scripts/graphd'],
 	classifiers = [
 		"Development Status :: 4 - Beta",
 		"License :: OSI Approved :: BSD License",

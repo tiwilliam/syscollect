@@ -4,10 +4,10 @@ import sys
 import time
 import signal
 
-import graphd.tcp as tcp
-import graphd.util as util
-import graphd.static as static
-import graphd.repository as repository
+import tcp
+import util
+import static
+import repository
 
 try:
 	import simplejson as json
