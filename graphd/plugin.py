@@ -9,10 +9,9 @@ import static
 import datastore
 
 class Plugin:
-	def __init__(self, file, plug_path, conf_path, ttl):
+	def __init__(self, file, plug_path, ttl):
 		self.file = file		# linux/graph_cpu
 		self.plug_path = plug_path	# /etc/graphd/plug
-		self.conf_path = conf_path	# /etc/graphd/conf
 
 		self.running = False
 		self.logger = logging.getLogger('default')
@@ -42,7 +41,7 @@ class Plugin:
 		self.t = ttimer.ttimer(self.interval, self.execute)
 
 	def read_config(self):
-		file_path = self.conf_path + '/' + self.filenoext + '.conf'
+		file_path = self.plug_path + '/' + self.filenoext + '.conf'
 
 		try:
 			f = open(file_path, "r")

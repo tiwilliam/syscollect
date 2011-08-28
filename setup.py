@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # coding=utf8
 
-import os
 from setuptools import setup
 
 import graphd.static as static
 
 setup(
-	name = static.name,
+	name = 'graphd',
 	version = str(static.major) + '.' + str(static.minor) + '.' + str(static.patch),
 	author = "William Tisäter",
 	author_email = "william@defunct.cc",
@@ -15,13 +14,9 @@ setup(
 	license = "BSD",
 	keywords = "graphd graph monitoring monitor",
 	url = "https://github.com/tiwilliam/graphd",
-	packages=['graphd'],
-	scripts=['scripts/graphd'],
-	#data_files=[
-	#	('/etc', ['scripts/initd']),
-	#	('/etc/init.d', ['scripts/initd'])
-	#],
-	classifiers=[
+	packages = ['graphd'],
+	scripts = ['scripts/graphd'],
+	classifiers = [
 		"Development Status :: 4 - Beta",
 		"License :: OSI Approved :: BSD License",
 		"Operating System :: MacOS :: MacOS X",

@@ -21,8 +21,7 @@ version = str(major) + '.' + str(minor) + '.' + str(patch)
 fqdn = socket.gethostname()
 
 if system == 'Windows':
-	plug_path = os.getenv('PROGRAMFILES', 'C:\\Program Files') + '\\' + name + '\\plugins'
-	conf_path = plug_path
+	base_path = os.getenv('PROGRAMFILES', 'C:\\Program Files')
+	plug_path = base_path + '\\' + name + '\\plugins'
 else:
 	plug_path = '/etc/' + name.lower() + '/plugins'
-	conf_path = plug_path

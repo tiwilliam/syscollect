@@ -11,7 +11,6 @@ class Repository:
 	def __init__(self):
 		self.ttl = static.ttl
 		self.plug_path = static.plug_path
-		self.conf_path = static.conf_path
 		self.system = static.system.lower()
 		self.logger = logging.getLogger('default')
 		
@@ -78,7 +77,7 @@ class Repository:
 					continue
 
 				try:
-					new_plug = plugin.Plugin(file, self.plug_path, self.conf_path, self.ttl)
+					new_plug = plugin.Plugin(file, self.plug_path, self.ttl)
 					self.plugins += [new_plug]
 				except ValueError as e:
 					self.logger.error(file + ': Failed to load plugin: ' + str(e))
