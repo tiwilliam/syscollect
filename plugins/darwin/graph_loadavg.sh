@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ "$1" == "config" ]; then
-	echo "interval 10"
-	exit
-fi
-
 load1=$(uptime | sed 's/.*load averages: \([0-9 \.]*\)$/\1/' | cut -d ' ' -f 1)
 load2=$(uptime | sed 's/.*load averages: \([0-9 \.]*\)$/\1/' | cut -d ' ' -f 2)
 load3=$(uptime | sed 's/.*load averages: \([0-9 \.]*\)$/\1/' | cut -d ' ' -f 3)

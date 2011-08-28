@@ -86,7 +86,7 @@ class Plugin:
 
 			if proc.returncode is 0:
 				for line in stdout.split('\n'):
-					match = re.match(r'(.+) (.+)$', line)
+					match = re.match(r'^([^ ]+) (.+)$', line)
 					if line and match:
 						self.datastore.push(match.groups()[0], match.groups()[1])
 						successful = True

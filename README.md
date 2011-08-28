@@ -60,3 +60,8 @@ Currently supported platforms:
 
 	$ cat /etc/graphd/conf/darwin/graph_cpu.conf
 	interval 10
+
+### Development flags
+
+To let graphd find the files needed to run uninstalled instances of graphd, please set the PYTHONPATH variabel:
+	export PYTHONPATH="<path>/graphd/lib"

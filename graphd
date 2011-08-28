@@ -73,39 +73,35 @@ def mgmt_fetch(conn, args):
 	try:
 		logger.info(host + ':' + port + ' - Fetching plugin data')
 
-		# Fetch all history we have
+		fetch_id = args[0]
+		fetch_plugin = repo.get_plugin(fetch_id)
+
+		# Could not find plugin
+		if not fetch_plugin:
+			conn.wfile.write('no such plugin: ' + fetch_id + '\n')
+			throw
+
 		if len(args) == 1:
-			fetch_id = args[0]
-			fetch_plugin = repo.get_plugin(fetch_id)
-
-			if fetch_plugin:
-				data = json.dumps(fetch_plugin.datastore.data)
-				conn.wfile.write(data + '\n')
-			else:
-				conn.wfile.write('no such plugin: ' + fetch_id + '\n')
-		# Fetch history from offset specified
+			# Fetch all history we have
+			data = json.dumps(fetch_plugin.datastore.data)
 		elif len(args) == 2:
-			fetch_id = args[0]
+			# Fetch history from offset specified
 			fetch_offset = int(args[1])
-			fetch_plugin = repo.get_plugin(fetch_id)
+			ret_data = {}
+			# Loop plugin values
+			for k in fetch_plugin.datastore.data:
+				ret_data[k] = []
+				# Loop each timestamp
+				for ts in fetch_plugin.datastore.data[k]:
+					# Get rid of data before our timestamp
+					if int(ts[0]) > fetch_offset:
+						ret_data[k] += [ts]
 
-			if fetch_plugin:
-				ret_data = {}
-				# Loop plugin values
-				for k in fetch_plugin.datastore.data:
-					ret_data[k] = []
-					# Loop each timestamp
-					for ts in fetch_plugin.datastore.data[k]:
-						# Get rid of data before our timestamp
-						if int(ts[0]) > fetch_offset:
-							ret_data[k] += [ts]
-
-				data = json.dumps(ret_data)
-				conn.wfile.write(data + '\n')
-			else:
-				conn.wfile.write('no such plugin: ' + fetch_id + '\n')
+			data = json.dumps(ret_data)
 		else:
 			throw
+
+		conn.wfile.write(data + '\n')
 	except:
 		logger.info(host + ':' + port + ' - Failed fetching plugin data')
 		conn.wfile.write('usage: fetch <plugin id> [<uptime offset>]\n')

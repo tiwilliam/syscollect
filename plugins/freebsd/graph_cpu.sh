@@ -1,10 +1,5 @@
 #!/bin/sh
 
-if [ "$1" = "config" ]; then
-	echo "interval 5"
-	exit
-fi
-
 cores=$(/sbin/sysctl hw.ncpu | cut -d ':' -f 2)
 cpu_user=$(/sbin/sysctl kern.cp_time | cut -d ':' -f 2 | cut -d ' ' -f 2)
 cpu_nice=$(/sbin/sysctl kern.cp_time | cut -d ':' -f 2 | cut -d ' ' -f 3)

@@ -5,15 +5,6 @@ int get_cpu_ticks();
 
 int main(int argc, char *argv[])
 {
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "config") == 0)
-		{
-			printf("interval 5\n");
-			return 0;
-		}
-	}
-	
 	int ret = get_cpu_ticks();
 	
 	return ret;

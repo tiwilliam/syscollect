@@ -1,9 +1,4 @@
-#!/bin/sh
-
-if [ "$1" = "config" ]; then
-	echo "interval 10"
-	exit
-fi
+#!/bin/ksh
 
 load1=$(uptime | sed 's/.*load averages: //' | cut -d ',' -f 1 | awk '{print $1}')
 load2=$(uptime | sed 's/.*load averages: //' | cut -d ',' -f 2 | awk '{print $1}')
