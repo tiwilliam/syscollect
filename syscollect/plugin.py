@@ -10,7 +10,7 @@ import datastore
 
 class Plugin:
 	def __init__(self, file, plug_path, ttl):
-		self.file = file		# linux/graph_cpu
+		self.file = file				# linux/cpu.sh
 		self.plug_path = plug_path
 
 		self.running = False
@@ -20,42 +20,19 @@ class Plugin:
 		# Set default values
 		self.interval = 10
 
-		# Detect plug type
+		# Remove arch from name
 		file_split = self.file.split('/')
-		plug_name = file_split[len(file_split) - 1]
-		plug_type = plug_name.split('_')[0]
+		self.name = file_split[len(file_split) - 1]	# cpu.sh
+
+		# Remove file extension
+		dot_split = self.name.rsplit('.')
+		self.name = dot_split[0]			# cpu
 
 		# Get rid of file extension
 		self.filenoext = os.path.splitext(self.file)[0]
 
-		if plug_type in static.types:
-			self.type = plug_type
-		else:
-			raise ValueError('Invalid plugin type')
-
-		# Override defaults with values from plugin
-		if self.plug_path and self.file:
-			self.config = self.read_config()
-
 		# Create thread with timer
 		self.t = ttimer.ttimer(self.interval, self.execute)
-
-	def read_config(self):
-		file_path = self.plug_path + '/' + self.filenoext + '.conf'
-
-		try:
-			f = open(file_path, "r")
-			text = f.read()
-			f.close()
-
-			config = text.strip()
-			config_list = config.split('\n')
-
-			return self.parse_config(config_list)
-
-		except (OSError, IOError) as e:
-			self.logger.error('Failed to get config: ' + file_path + ': ' + e.strerror)
-			return None
 
 	def start(self):
 		self.logger.debug('Start polling ' + self.file + ' with interval ' + str(self.interval))
@@ -109,16 +86,3 @@ class Plugin:
 
 	def update_interval(self, new_interval):
 		self.t.update_interval(new_interval)
-
-	def parse_config(self, config):
-		for prop in config:
-			prop = prop.strip().replace('\t', ' ')
-			prop_tuple = prop.partition(' ')
-			if len(prop) >= 2:
-				var = prop_tuple[0]
-				val = prop_tuple[2].strip()
-
-				if var == 'interval':
-					self.interval = int(val)
-				else:
-					self.logger.warn(self.file + ': Unknown config property: ' + var)

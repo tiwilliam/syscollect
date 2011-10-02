@@ -26,43 +26,20 @@ def gotsignal(signum, frame):
 	if signum == 2: # SIGINT
 		logger.info('Received interrupt signal - bye')
 		sys.exit(0)
-#	if signum == 1: # SIGHUP
-#		logger.info('Reloading plugin directory')
-#		repo.reload_plugins()
 
 ## TCP MGMT functions ##################################################
 
-def list_plugins(kind):
-	plist = []
+def mgmt_list(conn, args):
+	host = conn.client_address[0]
+	port = str(conn.client_address[1])
+	logger.info(host + ':' + port + ' - Listing plugins')
+
+	list = []
 
 	for p in loaded_plugins:
-		if p.type == kind:
-			plist += [p.file]
+		list += [p.file]
 
-	return plist
-
-def mgmt_lsinfo(conn, args):
-	kind = 'info'
-
-	host = conn.client_address[0]
-	port = str(conn.client_address[1])
-	logger.info(host + ':' + port + ' - Listing ' + kind + ' plugins')
-
-	plist = list_plugins(kind)
-
-	data = json.dumps(plist)
-	conn.wfile.write(data + '\n')
-
-def mgmt_lsgraph(conn, args):
-	kind = 'graph'
-
-	host = conn.client_address[0]
-	port = str(conn.client_address[1])
-	logger.info(host + ':' + port + ' - Listing ' + kind + ' plugins')
-
-	plist = list_plugins(kind)
-
-	data = json.dumps(plist)
+	data = json.dumps(list)
 	conn.wfile.write(data + '\n')
 
 # Fetch data for specified plugin
@@ -123,19 +100,10 @@ def mgmt_help(conn, args):
 
 	conn.wfile.write('\n')
 
-# Reload plugin directory
-#def mgmt_reload(conn, args):
-#	host = conn.client_address[0]
-#	port = str(conn.client_address[1])
-#	logger.info(host + ':' + port + ' - Reloading plugin directory')
-#
-#	repo.reload_plugins()
-
 ## Main program ########################################################
 
 logger = util.logger(static.loglevel)
 
-addsignal(1, gotsignal) # SIGHUP - Not supported on Windows
 addsignal(2, gotsignal) # SIGINT
 
 logger.info('Starting ' + static.name + ' version ' + static.version + ' (' + static.fqdn + ')')
@@ -152,10 +120,8 @@ else:
 
 server = tcp.ThreadedServer(('', 8090), tcp.RequestHandler)
 
-server.add_callback('lsinfo', mgmt_lsinfo)
-server.add_callback('lsgraph', mgmt_lsgraph)
+server.add_callback('list', mgmt_list)
 server.add_callback('fetch', mgmt_fetch)
-#server.add_callback('reload', mgmt_reload)
 server.add_callback('help', mgmt_help)
 
 server.serve()

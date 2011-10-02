@@ -13,9 +13,10 @@ class Repository:
 		self.plug_path = static.plug_path
 		self.system = static.system.lower()
 		self.logger = logging.getLogger('default')
+		self.plugins = []
 		
-		self.load_plugins('noarch')
 		self.load_plugins(self.system)
+		self.load_plugins('noarch')
 
 	def pop_plugin(self, id):
 		i = 0
@@ -62,7 +63,6 @@ class Repository:
 
 	def load_plugins(self, arch):
 		files = self.read_plugdir(arch)
-		self.plugins = []
 
 		if files:
 			for file in files:
@@ -78,16 +78,11 @@ class Repository:
 
 				try:
 					new_plug = plugin.Plugin(file, self.plug_path, self.ttl)
-					self.plugins += [new_plug]
+					if new_plug.name not in self.plugins:
+						self.plugins += [new_plug]
 				except ValueError as e:
 					self.logger.error(file + ': Failed to load plugin: ' + str(e))
 
 		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.plug_path + '/' + arch)
 
 		return self.plugins
-
-	def config_load(self):
-		return # Do overrides to config values
-
-	def config_save(self):
-		return # Save runtime config to file
