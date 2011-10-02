@@ -1,6 +1,6 @@
-# Cross-platform graph and system info distribution
-
-Graphd have as goal to make server graphing easy and platform independent.
+# Cross-platform system data collector
+---
+Time to make data collecting easy and platform independent!
 
 Currently supported platforms:
 
@@ -13,27 +13,35 @@ Currently supported platforms:
 ### How does it work?
 
 	$ nc localhost 8090
-	# darwin.defunct.cc graphd 0.5.0
+	# darwin.defunct.cc syscollect 0.5.0
 
-	lsgraph
-	["darwin/graph_cpu", "darwin/graph_loadavg"]
+	list
+	["cpu", "loadavg", "os"]
 
-	fetch darwin/graph_cpu
-	{"cpu_nice": [
-		[1309200447, "15"],
-		[1309200452, "15"],
-		[1309200457, "16"],
-		[1309200462, "16"],
-		...
-	]}
-
-	lsinfo
-	["darwin/info_os"]
-
-	fetch darwin/info_os
-	{"os_version": [
-		[1309200467, "Mac OS X 10.7"]
-	]}
+	fetch cpu
+	{"time": 1309200447,
+	 "data": {
+	 	"sys": [
+			[0, "15"],
+			[5, "15"],
+			[10, "16"],
+			...
+		],
+		"user": [
+			[0, "2425"],
+			[5, "2428"],
+			[10, "2432"],
+			...
+		]
+	 }
+	}
+	
+	fetch os
+	{"time": 1309200447,
+	 "version": [
+		[0, "Mac OS X 10.7"]
+	 ]
+	}
 
 ### Write your own plugins
 
@@ -47,13 +55,7 @@ Currently supported platforms:
     
 	$ ls -l /etc/graphd/plugins/darwin
 	total 40
-	-rw-r--r--  1 wille  staff  1392 Jun 25 13:57 graph_cpu.c
-	-rw-r--r--  1 wille  staff   102 Jun 25 15:55 graph_cpu.conf
-	-rwxr-xr-x  1 wille  staff  8992 Jun 25 15:55 graph_cpu
-	-rwxr-xr-x  1 wille  staff   391 Jun 25 15:27 graph_loadavg
-	-rw-r--r--  1 wille  staff   102 Jun 25 15:27 graph_loadavg.conf
-	-rwxr-xr-x  1 wille  staff   405 Jun 25 16:23 info_os
-	-rw-r--r--  1 wille  staff   125 Jun 25 16:23 info_os.conf
-
-	$ cat /etc/graphd/plugins/darwin/graph_cpu.conf
-	interval 10
+	-rw-r--r--  1 wille  staff  1392 Jun 25 13:57 cpu.c
+	-rwxr-xr-x  1 wille  staff  8992 Jun 25 15:55 cpu
+	-rwxr-xr-x  1 wille  staff   391 Jun 25 15:27 loadavg
+	-rwxr-xr-x  1 wille  staff   405 Jun 25 16:23 os
