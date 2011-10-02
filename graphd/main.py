@@ -85,17 +85,25 @@ def mgmt_fetch(conn, args):
 			# Fetch all history we have
 			data = json.dumps(fetch_plugin.datastore.data)
 		elif len(args) == 2:
-			# Fetch history from offset specified
 			fetch_offset = int(args[1])
-			ret_data = {}
-			# Loop plugin values
-			for k in fetch_plugin.datastore.data:
-				ret_data[k] = []
-				# Loop each timestamp
-				for ts in fetch_plugin.datastore.data[k]:
-					# Get rid of data before our timestamp
-					if int(ts[0]) > fetch_offset:
-						ret_data[k] += [ts]
+			if fetch_offset:
+				# Fetch history from offset specified
+				ret_data = {}
+				# Loop plugin values
+				for k in fetch_plugin.datastore.data:
+					ret_data[k] = []
+					# Loop each timestamp
+					for ts in fetch_plugin.datastore.data[k]:
+						# Get rid of data before our timestamp
+						if int(ts[0]) > fetch_offset:
+							ret_data[k] += [ts]
+			else:
+				# Fetch latest value
+				ret_data = {}
+				# Loop plugin values
+				for k in fetch_plugin.datastore.data:
+					list_len = len(fetch_plugin.datastore.data[k])
+					ret_data[k] = fetch_plugin.datastore.data[k][list_len - 1]
 
 			data = json.dumps(ret_data)
 		else:

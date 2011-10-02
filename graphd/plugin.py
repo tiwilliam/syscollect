@@ -31,7 +31,7 @@ class Plugin:
 		if plug_type in static.types:
 			self.type = plug_type
 		else:
-			raise ValueError, 'Invalid plugin type'
+			raise ValueError('Invalid plugin type')
 
 		# Override defaults with values from plugin
 		if self.plug_path and self.file:
