@@ -8,7 +8,7 @@ except:
 
 ttl = 300
 loglevel = 'debug'
-name = 'graphd'
+name = 'syscollect'
 
 types = [ 'graph', 'info' ]
 ignoresuffix = [ 'disabled', 'c', 'conf' ]

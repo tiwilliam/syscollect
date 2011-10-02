@@ -3,18 +3,18 @@
 
 from setuptools import setup
 
-import graphd.static as static
+import syscollect.static as static
 
 setup(
-	name = 'graphd',
+	name = static.name,
 	version = str(static.major) + '.' + str(static.minor) + '.' + str(static.patch),
 	author = "William Tisäter",
 	author_email = "william@defunct.cc",
 	description = ("Cross-platform server for distributing graph and system data."),
 	license = "BSD",
-	keywords = "graphd graph monitoring monitor",
-	url = "https://github.com/tiwilliam/graphd",
-	packages = ['graphd'],
+	keywords = "syscollect monitoring monitor data collect collector info",
+	url = "https://github.com/tiwilliam/syscollect",
+	packages = ['syscollect'],
 	classifiers = [
 		"Development Status :: 4 - Beta",
 		"License :: OSI Approved :: BSD License",

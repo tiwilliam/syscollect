@@ -45,7 +45,7 @@ Currently supported platforms:
 
 ### Write your own plugins
 
-	$ ls -l /etc/graphd/plugins
+	$ ls -l /etc/syscollect/plugins
 	total 0
 	drwxr-xr-x  5 wille  staff  170 Jun 25 16:58 darwin
 	drwxr-xr-x  4 wille  staff  136 Jun 25 15:17 freebsd
@@ -53,7 +53,7 @@ Currently supported platforms:
 	drwxr-xr-x  2 wille  staff   68 Jun 25 15:06 noarch
 	drwxr-xr-x  4 wille  staff  136 Jun 25 15:09 openbsd
     
-	$ ls -l /etc/graphd/plugins/darwin
+	$ ls -l /etc/syscollect/plugins/darwin
 	total 40
 	-rw-r--r--  1 wille  staff  1392 Jun 25 13:57 cpu.c
 	-rwxr-xr-x  1 wille  staff  8992 Jun 25 15:55 cpu

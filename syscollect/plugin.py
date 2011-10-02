@@ -11,7 +11,7 @@ import datastore
 class Plugin:
 	def __init__(self, file, plug_path, ttl):
 		self.file = file		# linux/graph_cpu
-		self.plug_path = plug_path	# /etc/graphd/plug
+		self.plug_path = plug_path
 
 		self.running = False
 		self.logger = logging.getLogger('default')
