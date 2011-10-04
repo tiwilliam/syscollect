@@ -7,4 +7,4 @@ fi
 
 uptime=$(cat /proc/uptime | cut -d ' ' -f 1)
 
-echo "uptime $uptime"
+echo "uptime.value $uptime"

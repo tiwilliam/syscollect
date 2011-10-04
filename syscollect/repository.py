@@ -28,7 +28,7 @@ class Repository:
 	def get_plugin(self, id):
 		i = 0
 		for p in self.plugins:
-			if p.file == id:
+			if p.name == id:
 				return p
 			i += 1
 
@@ -77,12 +77,21 @@ class Repository:
 					continue
 
 				try:
-					new_plug = plugin.Plugin(file, self.plug_path, self.ttl)
-					if new_plug.name not in self.plugins:
+					if self.exists(file):
+						self.logger.warn('Ignoring ' + file + ': conflicting plugin name')
+					else:
+						new_plug = plugin.Plugin(file, self.plug_path, self.ttl)
 						self.plugins += [new_plug]
 				except ValueError as e:
 					self.logger.error(file + ': Failed to load plugin: ' + str(e))
 
-		self.logger.info('Loaded ' + str(len(self.plugins)) + ' plugins from ' + self.plug_path + '/' + arch)
+		self.logger.info('Loaded plugins from ' + self.plug_path + '/' + arch)
 
 		return self.plugins
+
+	def exists(self, file):
+		for x in self.plugins:
+			if x.name == file.rpartition('/')[2]:
+				return True
+
+		return False

@@ -8,5 +8,5 @@ fi
 threads=$(ps -AT | egrep -vc "PID|TTY")
 maxthreads=$(cat /proc/sys/kernel/threads-max)
 
-echo "maxtreads $maxthreads"
-echo "treads $threads"
+echo "maxtreads.value $maxthreads"
+echo "treads.value $threads"

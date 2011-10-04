@@ -37,7 +37,7 @@ def mgmt_list(conn, args):
 	list = []
 
 	for p in loaded_plugins:
-		list += [p.file]
+		list += [p.name]
 
 	data = json.dumps(list)
 	conn.wfile.write(data + '\n')

@@ -11,7 +11,7 @@ for mount in $mounts; do
 	total=$(df -P $mount | tail -1 | awk '{ print $2 }')
 	used=$(df -P $mount | tail -1 | awk '{ print $3 }')
 	free=$(df -P $mount | tail -1 | awk '{ print $4 }')
-	echo "${mount}.total $total"
-	echo "${mount}.used $used"
-	echo "${mount}.free $free"
+	echo "${mount}.total.value $total"
+	echo "${mount}.used.value $used"
+	echo "${mount}.free.value $free"
 done

@@ -20,10 +20,10 @@ for dev in $devs; do
 	rdrop=$(cat /proc/net/dev | egrep "^[ ]*$dev:" | cut -d ':' -f 2 | awk '{ print $3 }')
 	sdrop=$(cat /proc/net/dev | egrep "^[ ]*$dev:" | cut -d ':' -f 2 | awk '{ print $11 }')
 
-	echo "${dev}.recv $recv"
-	echo "${dev}.sent $sent"
-	echo "${dev}.rerr $rerr"
-	echo "${dev}.serr $serr"
-	echo "${dev}.rdrop $rdrop"
-	echo "${dev}.sdrop $sdrop"
+	echo "${dev}.recv.value $recv"
+	echo "${dev}.sent.value $sent"
+	echo "${dev}.rerr.value $rerr"
+	echo "${dev}.serr.value $serr"
+	echo "${dev}.rdrop.value $rdrop"
+	echo "${dev}.sdrop.value $sdrop"
 done

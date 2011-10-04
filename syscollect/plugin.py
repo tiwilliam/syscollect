@@ -9,9 +9,11 @@ import static
 import datastore
 
 class Plugin:
-	def __init__(self, file, plug_path, ttl):
-		self.file = file				# linux/cpu.sh
-		self.plug_path = plug_path
+	def __init__(self, file, plugin_path, ttl):
+		self.file = file			# linux/cpu.sh
+		self.name = file.rpartition('/')[2]	# cpu.sh
+
+		self.plugin_path = plugin_path
 
 		self.running = False
 		self.logger = logging.getLogger('default')
@@ -19,17 +21,6 @@ class Plugin:
 
 		# Set default values
 		self.interval = 10
-
-		# Remove arch from name
-		file_split = self.file.split('/')
-		self.name = file_split[len(file_split) - 1]	# cpu.sh
-
-		# Remove file extension
-		dot_split = self.name.rsplit('.')
-		self.name = dot_split[0]			# cpu
-
-		# Get rid of file extension
-		self.filenoext = os.path.splitext(self.file)[0]
 
 		# Create thread with timer
 		self.t = ttimer.ttimer(self.interval, self.execute)
@@ -55,7 +46,7 @@ class Plugin:
 			start = time.time()
         	
 			proc = subprocess.Popen(
-				[self.plug_path + '/' + self.file],
+				[self.plugin_path + '/' + self.file],
 				stdout = subprocess.PIPE,
 				stderr = subprocess.PIPE
 			)
@@ -65,7 +56,7 @@ class Plugin:
 
 			if proc.returncode is 0:
 				for line in stdout.split('\n'):
-					match = re.match(r'^([^ ]+) (.+)$', line)
+					match = re.match(r'^([^ ]+)\.value (.+)$', line)
 					if line and match:
 						self.datastore.push(match.groups()[0], match.groups()[1])
 						successful = True
