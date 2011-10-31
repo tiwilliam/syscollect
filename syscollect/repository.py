@@ -73,7 +73,7 @@ class Repository:
 
 				# Skip dot files and file extensions listed in static.ignoresuffix
 				if dotfile.search(file) or ignore.search(file):
-					self.logger.debug('Skipping file: ' + file)
+					self.logger.warn('Skipping file: ' + file)
 					continue
 
 				try:
