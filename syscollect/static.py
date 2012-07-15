@@ -10,8 +10,8 @@ ttl = 300
 loglevel = 'debug'
 name = 'syscollect'
 
-types = [ 'graph', 'info' ]
-ignoresuffix = [ 'disabled', 'c', 'conf' ]
+types = ['graph', 'info']
+ignoresuffix = ['disabled', 'c', 'conf']
 
 major = 0
 minor = 5
@@ -21,7 +21,7 @@ version = str(major) + '.' + str(minor) + '.' + str(patch)
 fqdn = socket.gethostname()
 
 if system == 'Windows':
-	base_path = os.getenv('PROGRAMFILES', 'C:\\Program Files')
-	plug_path = base_path + '\\' + name + '\\plugins'
+    base_path = os.getenv('PROGRAMFILES', 'C:\\Program Files')
+    plugin_paths = ['%s\\%s\\plugins' % (base_path, name)]
 else:
-	plug_path = '/etc/' + name.lower() + '/plugins'
+    plugin_paths = ['/etc/%s/plugins' % name.lower(), '../plugins']

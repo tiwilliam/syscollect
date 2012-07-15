@@ -1,97 +1,102 @@
 import re
 import os
-import ttimer
 import logging
-import subprocess
 
 import plugin
 import static
 
+
 class Repository:
-	def __init__(self):
-		self.ttl = static.ttl
-		self.plug_path = static.plug_path
-		self.system = static.system.lower()
-		self.logger = logging.getLogger('default')
-		self.plugins = []
-		
-		self.load_plugins(self.system)
-		self.load_plugins('noarch')
+    def __init__(self):
+        self.ttl = static.ttl
+        self.system = static.system.lower()
+        self.logger = logging.getLogger('default')
+        self.plugins = []
 
-	def pop_plugin(self, id):
-		i = 0
-		for p in self.plugins:
-			if p.file == id:
-				return self.plugins.pop(i)
-			i += 1
+        for path in static.plugin_paths:
+            if not os.path.isdir(path):
+                continue
+            self.plugin_path = path
 
-	def get_plugin(self, id):
-		i = 0
-		for p in self.plugins:
-			if p.name == id:
-				return p
-			i += 1
+        if not self.plugin_path:
+            raise RuntimeError('Could not find plugin directory')
 
-		return None
+        self.load_plugins(self.system)
+        self.load_plugins('noarch')
 
-	def get_plugins(self):
-		if hasattr(self, 'plugins'):
-			return self.plugins
+    def pop_plugin(self, id):
+        i = 0
+        for p in self.plugins:
+            if p.file == id:
+                return self.plugins.pop(i)
+            i += 1
 
-		return None
+    def get_plugin(self, id):
+        i = 0
+        for p in self.plugins:
+            if p.name == id:
+                return p
+            i += 1
 
-	def start_plugins(self):
-		for p in self.plugins:
-			if not p.status(): p.start()
+        return None
 
-	def read_plugdir(self, arch):
-		try:
-			files = os.listdir(self.plug_path + '/' + arch)
-			plugins = []
+    def get_plugins(self):
+        if hasattr(self, 'plugins'):
+            return self.plugins
 
-			for file in files:
-				full_file_path = self.plug_path + '/' + arch + '/' + file
+        return None
 
-				if os.path.isfile(full_file_path):
-					plugins += [arch + '/' + file]
+    def start_plugins(self):
+        for p in self.plugins:
+            if not p.status():
+                p.start()
 
-			return plugins
-		except OSError as e:
-			self.logger.error('Failed to read directory \'' + self.plug_path + '/' + arch + '\': ' + e.strerror)
-			return None
-		
+    def read_plugdir(self, arch):
+        plugins = []
+        try:
+            files = os.listdir(self.plugin_path + '/' + arch)
+            for file in files:
+                full_file_path = self.plugin_path + '/' + arch + '/' + file
 
-	def load_plugins(self, arch):
-		files = self.read_plugdir(arch)
+                if os.path.isfile(full_file_path):
+                    plugins += [arch + '/' + file]
+        except OSError as e:
+            params = (self.plugin_path, arch, e.strerror)
+            raise Exception('Failed to read directory %s/%s: %s' % params)
 
-		if files:
-			for file in files:
-				ignoresuffix = "|".join(static.ignoresuffix)
+        return plugins
 
-				dotfile = re.compile('^\.')
-				ignore = re.compile('\.(' + ignoresuffix + ')$')
+    def load_plugins(self, arch):
+        files = self.read_plugdir(arch)
 
-				# Skip dot files and file extensions listed in static.ignoresuffix
-				if dotfile.search(file) or ignore.search(file):
-					self.logger.warn('Skipping file: ' + file)
-					continue
+        if not files:
+            return self.plugins
 
-				try:
-					if self.exists(file):
-						self.logger.warn('Ignoring ' + file + ': conflicting plugin name')
-					else:
-						new_plug = plugin.Plugin(file, self.plug_path, self.ttl)
-						self.plugins += [new_plug]
-				except ValueError as e:
-					self.logger.error(file + ': Failed to load plugin: ' + str(e))
+        for file in files:
+            ignoresuffix = "|".join(static.ignoresuffix)
 
-		self.logger.info('Loaded plugins from ' + self.plug_path + '/' + arch)
+            dotfile = re.compile('^\.')
+            ignore = re.compile('\.(' + ignoresuffix + ')$')
 
-		return self.plugins
+            # Skip dot files and file extensions (static.ignoresuffix)
+            if dotfile.search(file) or ignore.search(file):
+                self.logger.warn('Skipping file: ' + file)
+                continue
 
-	def exists(self, file):
-		for x in self.plugins:
-			if x.name == file.rpartition('/')[2]:
-				return True
+            try:
+                if self.exists(file):
+                    raise ValueError('Conflicting name')
+                new_plug = plugin.Plugin(file, self.plugin_path, self.ttl)
+                self.plugins += [new_plug]
+            except ValueError as e:
+                self.logger.error(file + ': Failed to load plugin: ' + str(e))
 
-		return False
+        self.logger.info('Loaded plugins from ' + self.plugin_path + '/' + arch)
+        return self.plugins
+
+    def exists(self, file):
+        for x in self.plugins:
+            if x.name == file.rpartition('/')[2]:
+                return True
+
+        return False
